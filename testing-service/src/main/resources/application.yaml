@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
+
+keycloak:
+  realm: 'eng-self'
+  auth-server-url: http://localhost:18080
+  ssl-required: external
+  resource: 'eng-self'
+  credentials:
+    secret: 'p4XX4oUQbUA4Y3IfeTC9ihW2HjFkbaEr'
+  use-resource-role-mappings: true
+  bearer-only: true
+
+other:
+  service:
+    url:
+      photo: http://localhost:9999/files
+
+server:
+  port: 8083

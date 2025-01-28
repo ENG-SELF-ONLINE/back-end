@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio-engself
+    env_file:
+      - minio.env
+    command: server --address :9000 ~/minio --console-address :9090
+    ports:
+      - '9090:9090'
+      - '9000:9000'
+    volumes:
+      - minio-data:/minio
+    networks:
+      - mynetwork
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb myminio/books;
+      /usr/bin/mc mb myminio/covers;
+      /usr/bin/mc mb myminio/profile;
+      /usr/bin/mc mb myminio/decks;
+      /usr/bin/mc mb myminio/words;
+      /usr/bin/mc mb myminio/explanations;
+      /usr/bin/mc mb myminio/audios;
+      /usr/bin/mc policy set public myminio/books;
+      /usr/bin/mc policy set public myminio/covers;
+      /usr/bin/mc policy set public myminio/profile;
+      /usr/bin/mc policy set public myminio/decks;
+      /usr/bin/mc policy set public myminio/words;
+      /usr/bin/mc policy set public myminio/explanations;
+      /usr/bin/mc policy set public myminio/audios;
+      exit 0;
+      "
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  minio-data:
+    driver: local
