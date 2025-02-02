@@ -1,9 +1,9 @@
 package ru.engself.profileservice.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.profileservice.dtos.UserDTO;
 import ru.engself.profileservice.enums.BucketEnum;
@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final ObjectMapper objectMapper;
 
     @Override
+    @Transactional
     public UserDTO createUser(MultipartFile userDTO, MultipartFile image) {
 
         try (InputStream inputStream = userDTO.getInputStream()) {
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
             String photo = photoFeignController.uploadFile(image, BucketEnum.PROFILE).getFilename();
 
             UserDTO user = UserDTO.builder()
-                    .userId(users.getUserId()) // TODO не работает
+                    .userId(users.getUserId())
                     .email(users.getEmail())
                     .firstName(users.getFirstName())
                     .lastName(users.getLastName())
@@ -83,7 +84,35 @@ public class UserServiceImpl implements UserService {
         }
         user.setUpdatedAt(LocalDateTime.now());
 
-        return userMapper.toDTO(userRepository.save(userMapper.toEntity(user)));
+        return userMapper.toDTO(
+                userRepository.save(userMapper.toEntity(user))
+        );
+    }
+
+    @Override
+    public UserDTO getUserByEmail(String email, UUID userId) {
+        return userRepository.findUserByEmail(email).map(userMapper::toDTO).orElseThrow(
+                () -> new UserNotFoundException("There is no user with email: " + email)
+        );
+    }
+
+    @Override
+    @Transactional
+    public UserDTO updateUserPhoto(MultipartFile image, UUID userId) {
+
+        UserDTO currentUser = getUserById(userId);
+        String prevPhoto = currentUser.getPhoto();
+        String newPhoto = photoFeignController.uploadFile(image, BucketEnum.PROFILE).getFilename();
+
+        currentUser.setPhoto(newPhoto);
+        currentUser = userMapper.toDTO(
+                userRepository.save(userMapper.toEntity(currentUser))
+        );
+
+        if (prevPhoto != null && !prevPhoto.isEmpty())
+            photoFeignController.deleteFile(prevPhoto, BucketEnum.PROFILE);
+
+        return currentUser;
     }
 
     @Override

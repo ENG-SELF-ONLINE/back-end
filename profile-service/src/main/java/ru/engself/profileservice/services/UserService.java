@@ -14,4 +14,8 @@ public interface UserService {
     UserDTO updateUserById(UserDTO userDTO, UUID userId);
 
     String deleteUserById(UUID userId);
+
+    UserDTO getUserByEmail(String email, UUID userId);
+
+    UserDTO updateUserPhoto(MultipartFile image, UUID userId);
 }
