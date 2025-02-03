@@ -10,6 +10,7 @@
 		<module>reading-service</module>
 		<module>testing-service</module>
 		<module>profile-service</module>
+		<module>tracker-service</module>
 	</modules>
 
 	<packaging>pom</packaging>

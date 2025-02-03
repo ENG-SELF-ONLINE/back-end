@@ -117,6 +117,16 @@ public class WordProgressServiceImpl implements WordProgressService {
         return wordProgressMapper.toDTO(wordProgress);
     }
 
+//    @Override
+//    public DeckStatisticsDTO getStatisticsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UUID userId) {
+//        List<WordProgressDTO> wordProgressDTOs = wordProgressRepository
+//                .findAllWordProgressesByUserIdAndDateRange(userId, startDate, endDate)
+//                .stream()
+//                .map(wordProgressMapper::toDTO)
+//                .collect(Collectors.toList());
+//        return calculateStatistics(wordProgressDTOs);
+//    }
+
     private DeckStatisticsDTO calculateStatistics(List<WordProgressDTO> wordProgressDTOs) {
         Map<WordStatus, Integer> wordStatusCounts = wordProgressDTOs.stream()
                 .collect(Collectors.groupingBy(WordProgressDTO::getWordStatus, Collectors.summingInt(wp -> 1)));

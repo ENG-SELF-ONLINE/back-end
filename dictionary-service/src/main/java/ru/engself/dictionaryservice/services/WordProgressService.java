@@ -5,6 +5,7 @@ import ru.engself.dictionaryservice.dtos.WordDTO;
 import ru.engself.dictionaryservice.dtos.WordProgressDTO;
 import ru.engself.dictionaryservice.enums.WordReviewResult;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,4 +25,6 @@ public interface WordProgressService {
     WordProgressDTO getWordProgressById(UUID wordProgressId, UUID userId);
 
     WordProgressDTO getWordProgressByWordId(UUID wordId, UUID userId);
+
+//    DeckStatisticsDTO getStatisticsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UUID userId);
 }

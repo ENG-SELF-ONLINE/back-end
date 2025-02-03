@@ -1,4 +1,4 @@
-package ru.engself.profileservice.config;
+package ru.engself.trackerservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,10 +34,9 @@ public class KeycloakSecurityConfig {
                                         "/configuration/security",
                                         "/swagger-ui/**",
                                         "/webjars/**",
-                                        "/swagger-ui.html",
-                                        "/users/**"
+                                        "/swagger-ui.html"
                                 ).permitAll()
-//                                .requestMatchers("/users/api/**").hasRole("user")
+                                .requestMatchers("/trackers/**").hasRole("user")
                                 .anyRequest()
                                 .authenticated()
                 )

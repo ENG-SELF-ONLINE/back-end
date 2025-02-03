@@ -1,6 +1,7 @@
 package ru.engself.dictionaryservice.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import ru.engself.dictionaryservice.dtos.WordProgressDTO;
 import ru.engself.dictionaryservice.enums.WordReviewResult;
 import ru.engself.dictionaryservice.services.WordProgressService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,6 +67,15 @@ public class WordProgressController {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(wordProgressService.getWordsByDeckId(deckId, userId), HttpStatus.OK);
     }
+
+//    @GetMapping("/users/statistics/period")
+//    public ResponseEntity<DeckStatisticsDTO> getStatisticsByPeriod(
+//            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+//            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+//            Authentication authentication) {
+//        UUID userId = getUserIdFromAuthentication(authentication);
+//        return new ResponseEntity<>(wordProgressService.getStatisticsByPeriod(startDate, endDate, userId), HttpStatus.OK);
+//    }
 
     @PostMapping("/{wordProgressId}/update")
     public ResponseEntity<Void> updateWordProgress(@PathVariable("wordProgressId") UUID wordProgressId, @RequestParam("result") WordReviewResult result, Authentication authentication) {
