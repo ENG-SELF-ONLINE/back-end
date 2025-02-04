@@ -3,6 +3,7 @@ package ru.engself.readingservice.services.impl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.engself.readingservice.dtos.BookDTO;
 import ru.engself.readingservice.dtos.BookProgressDTO;
@@ -23,6 +24,7 @@ public class BookProgressServiceImpl implements BookProgressService {
 
     private final BookProgressRepository bookProgressRepository;
     private final BookProgressMapper bookProgressMapper;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
 
     @Override
@@ -35,6 +37,7 @@ public class BookProgressServiceImpl implements BookProgressService {
         bookProgress.setIsCompleted(true);
         bookProgress.setUpdatedAt(LocalDateTime.now());
 
+        kafkaTemplate.send("reading-updates", "book_progress");
         return bookProgressMapper.toDTO(bookProgressRepository.save(bookProgress));
     }
 
@@ -49,6 +52,7 @@ public class BookProgressServiceImpl implements BookProgressService {
         bookProgress.setIsCompleted(false);
         bookProgress.setUpdatedAt(LocalDateTime.now());
 
+        kafkaTemplate.send("reading-updates", "book_progress");
         return bookProgressMapper.toDTO(bookProgressRepository.save(bookProgress));
     }
 
@@ -68,6 +72,7 @@ public class BookProgressServiceImpl implements BookProgressService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
+        kafkaTemplate.send("reading-updates", "book_progress");
         return bookProgressMapper.toDTO(
                 bookProgressRepository.save(bookProgressMapper.toEntity(bookProgress))
         );

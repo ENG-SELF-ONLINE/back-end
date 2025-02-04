@@ -2,6 +2,7 @@ package ru.engself.testingservice.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.engself.testingservice.dtos.LessonDTO;
 import ru.engself.testingservice.enums.LessonType;
@@ -21,6 +22,7 @@ public class LessonServiceImpl implements LessonService {
 
     private final LessonRepository lessonRepository;
     private final LessonMapper lessonMapper;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     public LessonDTO createLesson(LessonDTO lessonDTO, UUID userId) {
@@ -34,6 +36,7 @@ public class LessonServiceImpl implements LessonService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
+        kafkaTemplate.send("testing-updates", "test_progress_type");
         return lessonMapper.toDTO(
                 lessonRepository.save(lessonMapper.toEntity(lesson))
         );
@@ -77,6 +80,7 @@ public class LessonServiceImpl implements LessonService {
             lesson.setLessonOrder(order);
         }
         lesson.setUpdatedAt(LocalDateTime.now());
+        kafkaTemplate.send("testing-updates", "test_progress_type");
 
         return lessonMapper.toDTO(
                 lessonRepository.save(lessonMapper.toEntity(lesson))
@@ -90,6 +94,7 @@ public class LessonServiceImpl implements LessonService {
             throw new EntityNotFoundException("There is no lesson with id: " + lessonId);
         }
 
+        kafkaTemplate.send("testing-updates", "test_progress_type");
         lessonRepository.deleteById(lessonId);
         return "successful deleted";
     }

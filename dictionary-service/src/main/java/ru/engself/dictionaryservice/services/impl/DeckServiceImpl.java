@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.dictionaryservice.dtos.DeckDTO;
@@ -27,6 +28,7 @@ public class DeckServiceImpl implements DeckService {
     private final DeckRepository deckRepository;
     private final DeckMapper deckMapper;
     private final PhotoFeignController photoFeignController;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     @Transactional
@@ -83,6 +85,9 @@ public class DeckServiceImpl implements DeckService {
             throw new DeckNotFoundException("There is no deck with id: " + deckId);
         }
 
+        kafkaTemplate.send("word-progress-updates", "deck_statistics_period");
+        kafkaTemplate.send("word-progress-updates", "deck_statistics_deck");
+        kafkaTemplate.send("word-progress-updates", "deck_statistics_user");
         deckRepository.deleteById(deckId);
 
         return "successful deleted";

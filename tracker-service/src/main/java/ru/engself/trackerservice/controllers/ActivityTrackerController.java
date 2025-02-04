@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.engself.trackerservice.dtos.ActivityStatsDTO;
 import ru.engself.trackerservice.dtos.ActivityTrackerDTO;
-import ru.engself.trackerservice.enums.ActivityType;
 import ru.engself.trackerservice.services.ActivityTrackerService;
 
 import java.time.LocalDateTime;
@@ -58,12 +57,12 @@ public class ActivityTrackerController {
         return new ResponseEntity<>(activityTrackerService.getAllActivities(startDate, endDate, userId), HttpStatus.OK);
     }
 
-//    @GetMapping("/stats")
-//    public ResponseEntity<ActivityStatsDTO> getActivityStats(
-//            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-//            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-//            Authentication authentication) {
-//        return new ResponseEntity<>(activityTrackerService.getActivityStats(startDate, endDate, authentication), HttpStatus.OK);
-//    }
+    @GetMapping("/stats")
+    public ResponseEntity<ActivityStatsDTO> getActivityStats(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            Authentication authentication) {
+        return new ResponseEntity<>(activityTrackerService.getActivityStats(startDate, endDate, authentication), HttpStatus.OK);
+    }
 
 }

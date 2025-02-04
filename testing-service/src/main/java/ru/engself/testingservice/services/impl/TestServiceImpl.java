@@ -3,6 +3,7 @@ package ru.engself.testingservice.services.impl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.engself.testingservice.dtos.LessonDTO;
 import ru.engself.testingservice.dtos.TestDTO;
@@ -33,6 +34,7 @@ public class TestServiceImpl implements TestService {
     private final LessonMapper lessonMapper;
     private final QuestionRepository questionRepository;
     private final AnswerOptionRepository answerOptionRepository;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Transactional
     public TestDTO createTest(TestCreateDTO testCreateDTO, UUID lessonId, UUID userId) {
@@ -93,6 +95,7 @@ public class TestServiceImpl implements TestService {
             throw new EntityNotFoundException("There is no lesson with id: " + testId);
         }
 
+        kafkaTemplate.send("testing-updates", "test_progress_type");
         testRepository.deleteById(testId);
         return "successful deleted";
 

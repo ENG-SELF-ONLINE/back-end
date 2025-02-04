@@ -3,7 +3,6 @@ package ru.engself.trackerservice.services;
 import org.springframework.security.core.Authentication;
 import ru.engself.trackerservice.dtos.ActivityStatsDTO;
 import ru.engself.trackerservice.dtos.ActivityTrackerDTO;
-import ru.engself.trackerservice.enums.ActivityType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,5 +19,5 @@ public interface ActivityTrackerService {
 
     List<ActivityTrackerDTO> getAllActivities(LocalDateTime startDate, LocalDateTime endDate, UUID userId);
 
-//    ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication);
+    ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication);
 }

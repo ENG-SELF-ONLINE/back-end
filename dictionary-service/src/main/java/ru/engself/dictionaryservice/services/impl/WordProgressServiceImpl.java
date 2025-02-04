@@ -2,6 +2,7 @@ package ru.engself.dictionaryservice.services.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.engself.dictionaryservice.dtos.DeckStatisticsDTO;
 import ru.engself.dictionaryservice.dtos.WordDTO;
@@ -9,14 +10,12 @@ import ru.engself.dictionaryservice.dtos.WordProgressDTO;
 import ru.engself.dictionaryservice.entities.WordProgress;
 import ru.engself.dictionaryservice.enums.WordReviewResult;
 import ru.engself.dictionaryservice.enums.WordStatus;
-import ru.engself.dictionaryservice.exceptions.NoWordsForReviewException;
 import ru.engself.dictionaryservice.exceptions.WordProgressNotFoundException;
 import ru.engself.dictionaryservice.mappers.WordProgressMapper;
 import ru.engself.dictionaryservice.repositories.WordProgressRepository;
 import ru.engself.dictionaryservice.services.WordProgressService;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,6 +27,7 @@ public class WordProgressServiceImpl implements WordProgressService {
 
     private final WordProgressRepository wordProgressRepository;
     private final WordProgressMapper wordProgressMapper;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     public DeckStatisticsDTO getStatisticsByDeckId(UUID deckId, UUID userId) {
@@ -69,6 +69,10 @@ public class WordProgressServiceImpl implements WordProgressService {
 
         wordProgress.setNextReviewDate(nextReviewDate);
         wordProgress.setWordStatus(result == WordReviewResult.EXCELLENT ? WordStatus.REPEATING : WordStatus.LEARNING);
+
+        kafkaTemplate.send("word-progress-updates", "deck_statistics_period");
+        kafkaTemplate.send("word-progress-updates", "deck_statistics_deck");
+        kafkaTemplate.send("word-progress-updates", "deck_statistics_user");
 
         if (result == WordReviewResult.EXCELLENT && wordProgress.getPreviousResult() == WordReviewResult.EXCELLENT) {
             wordProgressRepository.delete(wordProgress);
@@ -117,15 +121,15 @@ public class WordProgressServiceImpl implements WordProgressService {
         return wordProgressMapper.toDTO(wordProgress);
     }
 
-//    @Override
-//    public DeckStatisticsDTO getStatisticsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UUID userId) {
-//        List<WordProgressDTO> wordProgressDTOs = wordProgressRepository
-//                .findAllWordProgressesByUserIdAndDateRange(userId, startDate, endDate)
-//                .stream()
-//                .map(wordProgressMapper::toDTO)
-//                .collect(Collectors.toList());
-//        return calculateStatistics(wordProgressDTOs);
-//    }
+    @Override
+    public DeckStatisticsDTO getStatisticsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UUID userId) {
+        List<WordProgressDTO> wordProgressDTOs = wordProgressRepository
+                .findAllWordProgressesByUserIdAndDateRange(userId, startDate, endDate)
+                .stream()
+                .map(wordProgressMapper::toDTO)
+                .collect(Collectors.toList());
+        return calculateStatistics(wordProgressDTOs);
+    }
 
     private DeckStatisticsDTO calculateStatistics(List<WordProgressDTO> wordProgressDTOs) {
         Map<WordStatus, Integer> wordStatusCounts = wordProgressDTOs.stream()

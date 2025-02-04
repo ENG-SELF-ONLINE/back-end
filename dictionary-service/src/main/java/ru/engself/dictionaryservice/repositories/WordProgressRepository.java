@@ -36,7 +36,7 @@ public interface WordProgressRepository extends JpaRepository<WordProgress, UUID
     @Query(value = "SELECT wp.* FROM word_progresses wp " +
             "JOIN words w ON wp.word_id = w.word_id " +
             "JOIN decks d ON w.deck_id = d.deck_id " +
-            "WHERE (d.user_info->>'userId')::uuid = :userId AND wp.updatedAt >= :startDate AND wp.updatedAt <= :endDate", nativeQuery = true)
+            "WHERE (d.user_info->>'userId')::uuid = :userId AND wp.updated_at >= :startDate AND wp.updated_at <= :endDate", nativeQuery = true)
     List<WordProgress> findAllWordProgressesByUserIdAndDateRange(
             @Param("userId") UUID userId,
             @Param("startDate") LocalDateTime startDate,

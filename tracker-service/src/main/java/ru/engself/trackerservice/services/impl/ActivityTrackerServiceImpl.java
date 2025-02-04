@@ -2,6 +2,7 @@ package ru.engself.trackerservice.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,6 @@ import ru.engself.trackerservice.dtos.ActivityTrackerDTO;
 import ru.engself.trackerservice.dtos.DeckStatisticsDTO;
 import ru.engself.trackerservice.dtos.UserDTO;
 import ru.engself.trackerservice.entities.ActivityTracker;
-import ru.engself.trackerservice.enums.ActivityType;
 import ru.engself.trackerservice.mappers.ActivityTrackerMapper;
 import ru.engself.trackerservice.repositories.ActivityTrackerRepository;
 import ru.engself.trackerservice.services.ActivityTrackerService;
@@ -35,6 +35,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
     private final ActivityTrackerMapper activityTrackerMapper;
     private final ProfileFeignController profileFeignController;
     private final DictionaryFeignController dictionaryFeignController;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     public ActivityTrackerDTO createActivity(ActivityTrackerDTO activityDTO, Authentication authentication) {
@@ -51,6 +52,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+        kafkaTemplate.send("tracker-updates", "activity_stats");
 
         return activityTrackerMapper.toDTO(
                 activityTrackerRepository.save(activityTrackerMapper.toEntity(activityTracker))
@@ -78,6 +80,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         activityTracker.setStartTime(startTime);
         activityTracker.setEndTime(endTime);
         activityTracker.setDuration(Duration.between(startTime, endTime).toMinutes());
+        kafkaTemplate.send("tracker-updates", "activity_stats");
 
         return activityTrackerMapper.toDTO(
                 activityTrackerRepository.save(activityTrackerMapper.toEntity(activityTracker))
@@ -91,6 +94,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
             throw new EntityNotFoundException("There is no activity with activityId: " + activityId);
         }
 
+        kafkaTemplate.send("tracker-updates", "activity_stats");
         activityTrackerRepository.deleteById(activityId);
         return "successful deleted";
 
@@ -106,33 +110,33 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication) {
-//
-//        UUID userId = getUserIdFromAuthentication(authentication);
-//
-//        List<ActivityTracker> activities = activityTrackerRepository
-//                .findActivitiesByUserIdAndDateRange(userId, startDate, endDate);
-//
-//        DeckStatisticsDTO deckStatistics = dictionaryFeignController.getStatisticsByPeriod(startDate, endDate, authentication);
-//
-//
-//        Map<String, List<Integer>> activitiesMap = activities.stream()
-//                .collect(Collectors.groupingBy(
-//                        activity -> activity.getActivityType().name().toLowerCase(),
-//                        Collectors.mapping(activity -> activity.getDuration().intValue(), Collectors.toList())
-//                ));
-//
-//        int totalTime = activities.stream()
-//                .mapToInt(activity -> activity.getDuration().intValue())
-//                .sum();
-//
-//        return ActivityStatsDTO.builder()
-//                .activities(activitiesMap)
-//                .totalTime(totalTime)
-//                .deckStatisticsDTO(deckStatistics)
-//                .build();
-//    }
+    @Override
+    public ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication) {
+
+        UUID userId = getUserIdFromAuthentication(authentication);
+
+        List<ActivityTracker> activities = activityTrackerRepository
+                .findActivitiesByUserIdAndDateRange(userId, startDate, endDate);
+
+        DeckStatisticsDTO deckStatistics = dictionaryFeignController.getStatisticsByPeriod(startDate, endDate, getAuthorizationHeader(authentication));
+
+
+        Map<String, List<Integer>> activitiesMap = activities.stream()
+                .collect(Collectors.groupingBy(
+                        activity -> activity.getActivityType().name().toLowerCase(),
+                        Collectors.mapping(activity -> activity.getDuration().intValue(), Collectors.toList())
+                ));
+
+        int totalTime = activities.stream()
+                .mapToInt(activity -> activity.getDuration().intValue())
+                .sum();
+
+        return ActivityStatsDTO.builder()
+                .activities(activitiesMap)
+                .totalTime(totalTime)
+                .deckStatisticsDTO(deckStatistics)
+                .build();
+    }
 
     private String getAuthorizationHeader(Authentication authentication) {
         if (authentication.getPrincipal() instanceof Jwt jwt) {

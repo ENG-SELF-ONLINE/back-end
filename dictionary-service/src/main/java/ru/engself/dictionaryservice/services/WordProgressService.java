@@ -26,5 +26,5 @@ public interface WordProgressService {
 
     WordProgressDTO getWordProgressByWordId(UUID wordId, UUID userId);
 
-//    DeckStatisticsDTO getStatisticsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UUID userId);
+    DeckStatisticsDTO getStatisticsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UUID userId);
 }

@@ -2,6 +2,7 @@ package ru.engself.testingservice.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.engself.testingservice.dtos.LessonDTO;
 import ru.engself.testingservice.dtos.UserDTO;
@@ -25,6 +26,7 @@ public class UserTestResultServiceImpl implements UserTestResultService {
     private final UserTestResultRepository userTestResultRepository;
     private final UserTestResultMapper userTestResultMapper;
     private final LessonService lessonService;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     public UserTestResultDTO createUserTestResult(UserTestResultDTO userTestResultDTO, UUID lessonId, UUID userId) {
@@ -63,6 +65,7 @@ public class UserTestResultServiceImpl implements UserTestResultService {
 
         userTestResult.setPassed(true);
         userTestResult.setUpdatedAt(LocalDateTime.now());
+        kafkaTemplate.send("testing-updates", "test_progress_type");
 
         return userTestResultMapper.toDTO(userTestResultRepository.save(userTestResult));
 
@@ -76,6 +79,7 @@ public class UserTestResultServiceImpl implements UserTestResultService {
 
         userTestResult.setPassed(false);
         userTestResult.setUpdatedAt(LocalDateTime.now());
+        kafkaTemplate.send("testing-updates", "test_progress_type");
 
         return userTestResultMapper.toDTO(userTestResultRepository.save(userTestResult));
 
@@ -136,6 +140,7 @@ public class UserTestResultServiceImpl implements UserTestResultService {
             userTestResult.setPassed(userTestResultDTO.getPassed());
         }
         userTestResult.setUpdatedAt(LocalDateTime.now());
+        kafkaTemplate.send("testing-updates", "test_progress_type");
 
         return userTestResultMapper.toDTO(
                 userTestResultRepository.save(userTestResultMapper.toEntity(userTestResult))
@@ -149,6 +154,7 @@ public class UserTestResultServiceImpl implements UserTestResultService {
             throw new EntityNotFoundException("There is no UserTestResult with id: " + userTestResultId);
         }
 
+        kafkaTemplate.send("testing-updates", "test_progress_type");
         userTestResultRepository.deleteById(userTestResultId);
         return "successful deleted";
     }

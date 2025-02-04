@@ -3,6 +3,7 @@ package ru.engself.dictionaryservice.services.impl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.dictionaryservice.dtos.CommonWordDTO;
@@ -32,6 +33,7 @@ public class WordServiceImpl implements WordService {
     private final WordMapper wordMapper;
     private final PhotoFeignController photoFeignController;
     private final WordProgressService wordProgressService;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     @Transactional
@@ -58,6 +60,10 @@ public class WordServiceImpl implements WordService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+
+        kafkaTemplate.send("word-progress-updates", "deck_statistics_period");
+        kafkaTemplate.send("word-progress-updates", "deck_statistics_deck");
+        kafkaTemplate.send("word-progress-updates", "deck_statistics_user");
 
         word = wordMapper.toDTO(wordRepository.save(wordMapper.toEntity(word)));
         wordProgressService.createWordProgress(word, userId);

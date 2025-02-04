@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.readingservice.dtos.BookDTO;
@@ -30,6 +31,7 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final BookRepository bookRepository;
     private final BookProgressService bookProgressService;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     @Transactional
@@ -98,6 +100,7 @@ public class BookServiceImpl implements BookService {
         }
 
         book.setUpdatedAt(LocalDateTime.now());
+        kafkaTemplate.send("reading-updates", "book_progress");
 
         return bookMapper.toDTO(bookRepository.save(bookMapper.toEntity(book)));
 
@@ -111,6 +114,7 @@ public class BookServiceImpl implements BookService {
         }
 
         bookRepository.deleteById(bookId);
+        kafkaTemplate.send("reading-updates", "book_progress");
 
         return "successful deleted";
 

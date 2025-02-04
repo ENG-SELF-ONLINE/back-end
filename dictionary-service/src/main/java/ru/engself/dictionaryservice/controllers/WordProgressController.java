@@ -68,14 +68,14 @@ public class WordProgressController {
         return new ResponseEntity<>(wordProgressService.getWordsByDeckId(deckId, userId), HttpStatus.OK);
     }
 
-//    @GetMapping("/users/statistics/period")
-//    public ResponseEntity<DeckStatisticsDTO> getStatisticsByPeriod(
-//            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-//            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-//            Authentication authentication) {
-//        UUID userId = getUserIdFromAuthentication(authentication);
-//        return new ResponseEntity<>(wordProgressService.getStatisticsByPeriod(startDate, endDate, userId), HttpStatus.OK);
-//    }
+    @GetMapping("/users/statistics/period")
+    public ResponseEntity<DeckStatisticsDTO> getStatisticsByPeriod(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        return new ResponseEntity<>(wordProgressService.getStatisticsByPeriod(startDate, endDate, userId), HttpStatus.OK);
+    }
 
     @PostMapping("/{wordProgressId}/update")
     public ResponseEntity<Void> updateWordProgress(@PathVariable("wordProgressId") UUID wordProgressId, @RequestParam("result") WordReviewResult result, Authentication authentication) {
