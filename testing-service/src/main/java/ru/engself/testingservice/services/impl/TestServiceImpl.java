@@ -24,6 +24,8 @@ import ru.engself.testingservice.services.TestService;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static ru.engself.testingservice.utils.AuthenticationUtils.generateKeyPrefix;
+
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
@@ -95,7 +97,8 @@ public class TestServiceImpl implements TestService {
             throw new EntityNotFoundException("There is no lesson with id: " + testId);
         }
 
-        kafkaTemplate.send("testing-updates", "test_progress_type");
+        String keyPrefix = generateKeyPrefix("test_progress_type", userId);
+        kafkaTemplate.send("testing-updates", keyPrefix);
         testRepository.deleteById(testId);
         return "successful deleted";
 

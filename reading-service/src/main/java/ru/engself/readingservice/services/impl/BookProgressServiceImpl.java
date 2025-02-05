@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.engself.readingservice.utils.AuthenticationUtils.generateKeyPrefix;
 import static ru.engself.readingservice.utils.AuthenticationUtils.getAuthorizationHeader;
 
 @Service
@@ -42,7 +43,8 @@ public class BookProgressServiceImpl implements BookProgressService {
         bookProgress.setIsCompleted(true);
         bookProgress.setUpdatedAt(LocalDateTime.now());
 
-        kafkaTemplate.send("reading-updates", "book_progress");
+        String keyPrefix = generateKeyPrefix("book_progress", userId);
+        kafkaTemplate.send("reading-updates", keyPrefix);
         return bookProgressMapper.toDTO(bookProgressRepository.save(bookProgress));
     }
 
@@ -57,7 +59,8 @@ public class BookProgressServiceImpl implements BookProgressService {
         bookProgress.setIsCompleted(false);
         bookProgress.setUpdatedAt(LocalDateTime.now());
 
-        kafkaTemplate.send("reading-updates", "book_progress");
+        String keyPrefix = generateKeyPrefix("book_progress", userId);
+        kafkaTemplate.send("reading-updates", keyPrefix);
         return bookProgressMapper.toDTO(bookProgressRepository.save(bookProgress));
     }
 
@@ -75,7 +78,8 @@ public class BookProgressServiceImpl implements BookProgressService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        kafkaTemplate.send("reading-updates", "book_progress");
+        String keyPrefix = generateKeyPrefix("book_progress", user.getUserId());
+        kafkaTemplate.send("reading-updates", keyPrefix);
         return bookProgressMapper.toDTO(
                 bookProgressRepository.save(bookProgressMapper.toEntity(bookProgress))
         );

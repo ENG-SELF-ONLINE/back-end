@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.engself.testingservice.utils.AuthenticationUtils.generateKeyPrefix;
 import static ru.engself.testingservice.utils.AuthenticationUtils.getAuthorizationHeader;
 
 @Service
@@ -66,7 +67,8 @@ public class UserTestResultServiceImpl implements UserTestResultService {
 
         userTestResult.setPassed(true);
         userTestResult.setUpdatedAt(LocalDateTime.now());
-        kafkaTemplate.send("testing-updates", "test_progress_type");
+        String keyPrefix = generateKeyPrefix("test_progress_type", userId);
+        kafkaTemplate.send("testing-updates", keyPrefix);
 
         return userTestResultMapper.toDTO(userTestResultRepository.save(userTestResult));
 
@@ -80,7 +82,8 @@ public class UserTestResultServiceImpl implements UserTestResultService {
 
         userTestResult.setPassed(false);
         userTestResult.setUpdatedAt(LocalDateTime.now());
-        kafkaTemplate.send("testing-updates", "test_progress_type");
+        String keyPrefix = generateKeyPrefix("test_progress_type", userId);
+        kafkaTemplate.send("testing-updates", keyPrefix);
 
         return userTestResultMapper.toDTO(userTestResultRepository.save(userTestResult));
 
@@ -136,7 +139,8 @@ public class UserTestResultServiceImpl implements UserTestResultService {
             userTestResult.setPassed(userTestResultDTO.getPassed());
         }
         userTestResult.setUpdatedAt(LocalDateTime.now());
-        kafkaTemplate.send("testing-updates", "test_progress_type");
+        String keyPrefix = generateKeyPrefix("test_progress_type", userId);
+        kafkaTemplate.send("testing-updates", keyPrefix);
 
         return userTestResultMapper.toDTO(
                 userTestResultRepository.save(userTestResultMapper.toEntity(userTestResult))
@@ -150,7 +154,8 @@ public class UserTestResultServiceImpl implements UserTestResultService {
             throw new EntityNotFoundException("There is no UserTestResult with id: " + userTestResultId);
         }
 
-        kafkaTemplate.send("testing-updates", "test_progress_type");
+        String keyPrefix = generateKeyPrefix("test_progress_type", userId);
+        kafkaTemplate.send("testing-updates", keyPrefix);
         userTestResultRepository.deleteById(userTestResultId);
         return "successful deleted";
     }

@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static ru.engself.dictionaryservice.utils.AuthenticationUtils.generateKeyPrefix;
+
 @Service
 @RequiredArgsConstructor
 public class WordProgressServiceImpl implements WordProgressService {
@@ -70,9 +72,10 @@ public class WordProgressServiceImpl implements WordProgressService {
         wordProgress.setNextReviewDate(nextReviewDate);
         wordProgress.setWordStatus(result == WordReviewResult.EXCELLENT ? WordStatus.REPEATING : WordStatus.LEARNING);
 
-        kafkaTemplate.send("word-progress-updates", "deck_statistics_period");
-        kafkaTemplate.send("word-progress-updates", "deck_statistics_deck");
-        kafkaTemplate.send("word-progress-updates", "deck_statistics_user");
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_period", userId));
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_deck", userId));
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_user", userId));
+        kafkaTemplate.send("activity-updates", generateKeyPrefix("activity_stats", userId));
 
         if (result == WordReviewResult.EXCELLENT && wordProgress.getPreviousResult() == WordReviewResult.EXCELLENT) {
             wordProgressRepository.delete(wordProgress);

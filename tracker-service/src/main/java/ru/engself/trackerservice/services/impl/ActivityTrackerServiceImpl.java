@@ -24,8 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static ru.engself.trackerservice.utils.AuthenticationUtils.getAuthorizationHeader;
-import static ru.engself.trackerservice.utils.AuthenticationUtils.getUserIdFromAuthentication;
+import static ru.engself.trackerservice.utils.AuthenticationUtils.*;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +51,8 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
-        kafkaTemplate.send("tracker-updates", "activity_stats");
+        String keyPrefix = generateKeyPrefix("activity_stats", user.getUserId());
+        kafkaTemplate.send("activity-updates", keyPrefix);
 
         return activityTrackerMapper.toDTO(
                 activityTrackerRepository.save(activityTrackerMapper.toEntity(activityTracker))
@@ -80,7 +80,8 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         activityTracker.setStartTime(startTime);
         activityTracker.setEndTime(endTime);
         activityTracker.setDuration(Duration.between(startTime, endTime).toMinutes());
-        kafkaTemplate.send("tracker-updates", "activity_stats");
+        String keyPrefix = generateKeyPrefix("activity_stats", userId);
+        kafkaTemplate.send("activity-updates", keyPrefix);
 
         return activityTrackerMapper.toDTO(
                 activityTrackerRepository.save(activityTrackerMapper.toEntity(activityTracker))
@@ -94,7 +95,8 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
             throw new EntityNotFoundException("There is no activity with activityId: " + activityId);
         }
 
-        kafkaTemplate.send("tracker-updates", "activity_stats");
+        String keyPrefix = generateKeyPrefix("activity_stats", userId);
+        kafkaTemplate.send("activity-updates", keyPrefix);
         activityTrackerRepository.deleteById(activityId);
         return "successful deleted";
 

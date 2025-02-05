@@ -36,4 +36,8 @@ public class AuthenticationUtils {
         }
     }
 
+    public static String generateKeyPrefix(String prefix, UUID userId) {
+        return String.format("%s:%s:", prefix, userId.toString());
+    }
+
 }

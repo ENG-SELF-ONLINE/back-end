@@ -23,6 +23,7 @@ import ru.engself.dictionaryservice.utils.feigns.ProfileFeignController;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static ru.engself.dictionaryservice.utils.AuthenticationUtils.generateKeyPrefix;
 import static ru.engself.dictionaryservice.utils.AuthenticationUtils.getAuthorizationHeader;
 
 @Service
@@ -91,11 +92,12 @@ public class DeckServiceImpl implements DeckService {
             throw new DeckNotFoundException("There is no deck with id: " + deckId);
         }
 
-        kafkaTemplate.send("word-progress-updates", "deck_statistics_period");
-        kafkaTemplate.send("word-progress-updates", "deck_statistics_deck");
-        kafkaTemplate.send("word-progress-updates", "deck_statistics_user");
-        deckRepository.deleteById(deckId);
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_period", userId));
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_deck", userId));
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_user", userId));
+        kafkaTemplate.send("activity-updates", generateKeyPrefix("activity_stats", userId));
 
+        deckRepository.deleteById(deckId);
         return "successful deleted";
 
     }

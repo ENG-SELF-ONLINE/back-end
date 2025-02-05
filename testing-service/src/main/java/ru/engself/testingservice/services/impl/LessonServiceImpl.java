@@ -16,6 +16,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.engself.testingservice.utils.AuthenticationUtils.generateKeyPrefix;
+
 @Service
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
@@ -36,7 +38,8 @@ public class LessonServiceImpl implements LessonService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        kafkaTemplate.send("testing-updates", "test_progress_type");
+        String keyPrefix = generateKeyPrefix("test_progress_type", userId);
+        kafkaTemplate.send("testing-updates", keyPrefix);
         return lessonMapper.toDTO(
                 lessonRepository.save(lessonMapper.toEntity(lesson))
         );
@@ -80,7 +83,8 @@ public class LessonServiceImpl implements LessonService {
             lesson.setLessonOrder(order);
         }
         lesson.setUpdatedAt(LocalDateTime.now());
-        kafkaTemplate.send("testing-updates", "test_progress_type");
+        String keyPrefix = generateKeyPrefix("test_progress_type", userId);
+        kafkaTemplate.send("testing-updates", keyPrefix);
 
         return lessonMapper.toDTO(
                 lessonRepository.save(lessonMapper.toEntity(lesson))
@@ -94,7 +98,8 @@ public class LessonServiceImpl implements LessonService {
             throw new EntityNotFoundException("There is no lesson with id: " + lessonId);
         }
 
-        kafkaTemplate.send("testing-updates", "test_progress_type");
+        String keyPrefix = generateKeyPrefix("test_progress_type", userId);
+        kafkaTemplate.send("testing-updates", keyPrefix);
         lessonRepository.deleteById(lessonId);
         return "successful deleted";
     }

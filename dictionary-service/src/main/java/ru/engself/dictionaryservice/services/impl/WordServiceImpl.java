@@ -22,6 +22,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static ru.engself.dictionaryservice.utils.AuthenticationUtils.generateKeyPrefix;
+
 @Service
 @RequiredArgsConstructor
 public class WordServiceImpl implements WordService {
@@ -60,9 +62,10 @@ public class WordServiceImpl implements WordService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        kafkaTemplate.send("word-progress-updates", "deck_statistics_period");
-        kafkaTemplate.send("word-progress-updates", "deck_statistics_deck");
-        kafkaTemplate.send("word-progress-updates", "deck_statistics_user");
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_period", userId));
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_deck", userId));
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_user", userId));
+        kafkaTemplate.send("activity-updates", generateKeyPrefix("activity_stats", userId));
 
         word = wordMapper.toDTO(wordRepository.save(wordMapper.toEntity(word)));
         wordProgressService.createWordProgress(word, userId);

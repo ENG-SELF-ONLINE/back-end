@@ -24,6 +24,8 @@ import ru.engself.readingservice.utils.feigns.PhotoFeignController;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static ru.engself.readingservice.utils.AuthenticationUtils.generateKeyPrefix;
+
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
@@ -101,7 +103,8 @@ public class BookServiceImpl implements BookService {
         }
 
         book.setUpdatedAt(LocalDateTime.now());
-        kafkaTemplate.send("reading-updates", "book_progress");
+        String keyPrefix = generateKeyPrefix("book_progress", userId);
+        kafkaTemplate.send("reading-updates", keyPrefix);
 
         return bookMapper.toDTO(bookRepository.save(bookMapper.toEntity(book)));
 
@@ -114,9 +117,10 @@ public class BookServiceImpl implements BookService {
             throw new BookNotFoundException("There is no book with id: " + bookId);
         }
 
-        bookRepository.deleteById(bookId);
-        kafkaTemplate.send("reading-updates", "book_progress");
+        String keyPrefix = generateKeyPrefix("book_progress", userId);
+        kafkaTemplate.send("reading-updates", keyPrefix);
 
+        bookRepository.deleteById(bookId);
         return "successful deleted";
 
     }
