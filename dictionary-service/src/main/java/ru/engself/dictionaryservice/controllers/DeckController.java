@@ -26,8 +26,7 @@ public class DeckController {
 
     @PostMapping
     public ResponseEntity<DeckDTO> createDeck(@RequestParam String name, @RequestParam("file") MultipartFile file, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(deckService.createDeck(name, file, userId), HttpStatus.OK);
+        return new ResponseEntity<>(deckService.createDeck(name, file, authentication), HttpStatus.OK);
     }
 
     @GetMapping("/{deckId}")

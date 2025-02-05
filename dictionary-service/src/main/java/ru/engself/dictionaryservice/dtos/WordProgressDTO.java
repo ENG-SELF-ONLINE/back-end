@@ -8,7 +8,6 @@ import ru.engself.dictionaryservice.enums.WordReviewResult;
 import ru.engself.dictionaryservice.enums.WordStatus;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Getter

@@ -8,7 +8,6 @@ import ru.engself.readingservice.enums.Genre;
 import ru.engself.readingservice.enums.Level;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Getter

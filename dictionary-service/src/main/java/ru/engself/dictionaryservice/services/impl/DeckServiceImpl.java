@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.dictionaryservice.dtos.DeckDTO;
@@ -16,10 +18,12 @@ import ru.engself.dictionaryservice.mappers.DeckMapper;
 import ru.engself.dictionaryservice.repositories.DeckRepository;
 import ru.engself.dictionaryservice.services.DeckService;
 import ru.engself.dictionaryservice.utils.feigns.PhotoFeignController;
+import ru.engself.dictionaryservice.utils.feigns.ProfileFeignController;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.UUID;
+
+import static ru.engself.dictionaryservice.utils.AuthenticationUtils.getAuthorizationHeader;
 
 @Service
 @RequiredArgsConstructor
@@ -28,17 +32,19 @@ public class DeckServiceImpl implements DeckService {
     private final DeckRepository deckRepository;
     private final DeckMapper deckMapper;
     private final PhotoFeignController photoFeignController;
+    private final ProfileFeignController profileFeignController;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     @Transactional
-    public DeckDTO createDeck(String name, MultipartFile file, UUID userId) {
+    public DeckDTO createDeck(String name, MultipartFile file, Authentication authentication) {
 
         String photoName = photoFeignController.uploadFile(file, BucketEnum.DECKS).getFilename();
+        UserDTO user = profileFeignController.getUserById(getAuthorizationHeader(authentication));
 
         DeckDTO deck = DeckDTO.builder()
                 .deckName(name)
-                .userInfo(UserDTO.builder().userId(userId).build())
+                .userInfo(user)
                 .deckPhoto(photoName)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())

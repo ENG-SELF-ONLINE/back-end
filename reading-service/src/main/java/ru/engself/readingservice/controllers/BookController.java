@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +30,7 @@ public class BookController {
     @PostMapping
     public ResponseEntity<BookDTO> createBook(@RequestPart("bookDTO") BookDTO bookDTO, @RequestPart("book") MultipartFile book,
                                               @RequestPart("image") MultipartFile image, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(bookService.createBook(bookDTO, book, image, userId), HttpStatus.OK);
+        return new ResponseEntity<>(bookService.createBook(bookDTO, book, image, authentication), HttpStatus.OK);
     }
 
     @GetMapping("/{bookId}")

@@ -3,14 +3,6 @@ package ru.engself.authservice.controllers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import ru.engself.authservice.config.KeycloakProvider;
-import ru.engself.authservice.dtos.UserDTO;
-import ru.engself.authservice.http.requests.CreateUserRequest;
-import ru.engself.authservice.http.requests.LoginRequest;
-import ru.engself.authservice.service.KeycloakAdminClientService;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.AccessTokenResponse;
@@ -18,6 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.engself.authservice.config.KeycloakProvider;
+import ru.engself.authservice.http.requests.CreateUserRequest;
+import ru.engself.authservice.http.requests.LoginRequest;
+import ru.engself.authservice.service.KeycloakAdminClientService;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;

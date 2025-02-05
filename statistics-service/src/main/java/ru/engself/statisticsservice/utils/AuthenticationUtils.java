@@ -28,4 +28,20 @@ public class AuthenticationUtils {
         }
     }
 
+    public static String generateKey(String prefix, Object... params) {
+        StringBuilder key = new StringBuilder(prefix).append(":");
+        for (Object param : params) {
+            key.append(param).append(":");
+        }
+        return key.toString();
+    }
+
+    public static String getAuthorizationHeader(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            return "Bearer " + jwt.getTokenValue();
+        } else {
+            return null;
+        }
+    }
+
 }

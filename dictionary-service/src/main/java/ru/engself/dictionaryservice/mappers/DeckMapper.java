@@ -5,7 +5,6 @@ import ru.engself.dictionaryservice.dtos.DeckDTO;
 import ru.engself.dictionaryservice.entities.Deck;
 
 @Mapper(componentModel = "spring")
-//@Mapper(componentModel = "spring", uses = {WordMapper.class})
 public interface DeckMapper {
 
     DeckDTO toDTO(Deck deck);

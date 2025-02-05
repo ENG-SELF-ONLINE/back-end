@@ -28,4 +28,12 @@ public class AuthenticationUtils {
         }
     }
 
+    public static String getAuthorizationHeader(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            return "Bearer " + jwt.getTokenValue();
+        } else {
+            return null;
+        }
+    }
+
 }

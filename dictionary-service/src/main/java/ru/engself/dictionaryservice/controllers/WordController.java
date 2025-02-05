@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.engself.dictionaryservice.dtos.DeckDTO;
 import ru.engself.dictionaryservice.dtos.WordDTO;
 import ru.engself.dictionaryservice.services.WordService;
 

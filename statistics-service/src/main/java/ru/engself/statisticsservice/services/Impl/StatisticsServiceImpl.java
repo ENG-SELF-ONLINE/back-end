@@ -2,7 +2,6 @@ package ru.engself.statisticsservice.services.Impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import ru.engself.statisticsservice.dtos.ActivityStatsDTO;
 import ru.engself.statisticsservice.dtos.DeckStatisticsDTO;
@@ -17,7 +16,7 @@ import ru.engself.statisticsservice.utils.feigns.TestingFeignController;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static ru.engself.statisticsservice.utils.AuthenticationUtils.getUserIdFromAuthentication;
+import static ru.engself.statisticsservice.utils.AuthenticationUtils.*;
 
 @Service
 @RequiredArgsConstructor
@@ -124,21 +123,5 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         return activityStats;
-    }
-
-    private String generateKey(String prefix, Object... params) {
-        StringBuilder key = new StringBuilder(prefix).append(":");
-        for (Object param : params) {
-            key.append(param).append(":");
-        }
-        return key.toString();
-    }
-
-    private String getAuthorizationHeader(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            return "Bearer " + jwt.getTokenValue();
-        } else {
-            return null;
-        }
     }
 }

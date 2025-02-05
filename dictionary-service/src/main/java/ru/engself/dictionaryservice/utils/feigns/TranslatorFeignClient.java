@@ -4,7 +4,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.engself.dictionaryservice.dtos.responces.TranslationResponse;
 
 @FeignClient(name = "deep-translator", url = "${translator.rapidapi.url}")

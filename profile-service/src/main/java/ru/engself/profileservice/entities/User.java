@@ -3,7 +3,6 @@ package ru.engself.profileservice.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.engself.profileservice.enums.Level;
 

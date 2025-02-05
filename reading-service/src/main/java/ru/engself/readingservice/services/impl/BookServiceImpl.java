@@ -6,6 +6,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.readingservice.dtos.BookDTO;
@@ -35,7 +36,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDTO createBook(BookDTO bookDTO, MultipartFile file, MultipartFile image, UUID userId) {
+    public BookDTO createBook(BookDTO bookDTO, MultipartFile file, MultipartFile image, Authentication authentication) {
 
         String bookName = photoFeignController.uploadFile(file, BucketEnum.BOOKS).getFilename();
         String imageName = photoFeignController.uploadFile(image, BucketEnum.COVERS).getFilename();
@@ -46,7 +47,7 @@ public class BookServiceImpl implements BookService {
         bookDTO.setUpdatedAt(LocalDateTime.now());
 
         Book book = bookRepository.save(bookMapper.toEntity(bookDTO));
-        bookProgressService.createBookProgress(bookMapper.toDTO(book), userId);
+        bookProgressService.createBookProgress(bookMapper.toDTO(book), authentication);
 
         return bookMapper.toDTO(book);
     }

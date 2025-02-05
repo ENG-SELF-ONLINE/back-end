@@ -35,6 +35,7 @@ other:
     url:
       photo: http://localhost:9999/files
       common-word: https://api.dictionaryapi.dev/api/v2/entries/en
+      profile: http://localhost:8084/users
 
 unsplash:
   access-key: qdZfzptnbTpSNUsQhPEm7AesgmBSI8NmxrLtQD2LIhU

@@ -3,21 +3,24 @@ package ru.engself.testingservice.services.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.engself.testingservice.dtos.LessonDTO;
 import ru.engself.testingservice.dtos.UserDTO;
 import ru.engself.testingservice.dtos.UserTestResultDTO;
 import ru.engself.testingservice.entities.UserTestResult;
 import ru.engself.testingservice.enums.LessonType;
-import ru.engself.testingservice.enums.Level;
 import ru.engself.testingservice.mappers.UserTestResultMapper;
 import ru.engself.testingservice.repositories.UserTestResultRepository;
 import ru.engself.testingservice.services.LessonService;
 import ru.engself.testingservice.services.UserTestResultService;
+import ru.engself.testingservice.utils.feigns.ProfileFeignController;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
+import static ru.engself.testingservice.utils.AuthenticationUtils.getAuthorizationHeader;
 
 @Service
 @RequiredArgsConstructor
@@ -26,19 +29,17 @@ public class UserTestResultServiceImpl implements UserTestResultService {
     private final UserTestResultRepository userTestResultRepository;
     private final UserTestResultMapper userTestResultMapper;
     private final LessonService lessonService;
+    private final ProfileFeignController profileFeignController;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
-    public UserTestResultDTO createUserTestResult(UserTestResultDTO userTestResultDTO, UUID lessonId, UUID userId) {
+    public UserTestResultDTO createUserTestResult(UserTestResultDTO userTestResultDTO, UUID lessonId, Authentication authentication) {
 
-        LessonDTO lessonDTO = lessonService.getLessonById(lessonId, userId);
+        UserDTO user = profileFeignController.getUserById(getAuthorizationHeader(authentication));
+        LessonDTO lessonDTO = lessonService.getLessonById(lessonId, user.getUserId());
 
         UserTestResultDTO userTestResult = UserTestResultDTO.builder()
-                .userInfo(
-                        UserDTO.builder()
-                        .userId(userId)
-                        .build()
-                )
+                .userInfo(user)
                 .lesson(lessonDTO)
                 .score(userTestResultDTO.getScore())
                 .passed(userTestResultDTO.getPassed())
@@ -92,34 +93,29 @@ public class UserTestResultServiceImpl implements UserTestResultService {
     }
 
     @Override
-    public Integer getBookProgressPercentByUserIdAndType(LessonType type, UUID userId) {
+    public Integer getBookProgressPercentByUserIdAndType(LessonType type, Authentication authentication) {
 
-        List<UserTestResultDTO> userTestResults = getAllUserTestResultsByUserId(userId);
+        UserDTO user = profileFeignController.getUserById(getAuthorizationHeader(authentication));
+        List<UserTestResultDTO> userTestResults = getAllUserTestResultsByUserId(user.getUserId());
 
-//        UserDTO userInfo = UserDTO.builder()
-//                .userId(userId)
-//                .build();
-
-//        if (userInfo == null || userInfo.getLevel() == null) {
-//            return 0; // Return 0% if user level or userInfo is null
-//        }
-
-        Level userLevel = Level.B1;
+        if (user.getLevel() == null) {
+            return 0;
+        }
 
         long totalBooksOnLevelAndType = userTestResults.stream()
                 .map(UserTestResultDTO::getLesson)
-                .filter(book -> book.getLevel() == userLevel)
+                .filter(book -> book.getLevel() == user.getLevel())
                 .filter(result -> result.getType() == type)
                 .count();
 
         if (totalBooksOnLevelAndType == 0) {
-            return 0; // Return 0% if there are no books on user's level
+            return 0;
         }
 
         long completedBooksOnLevelAndType = userTestResults.stream()
                 .filter(UserTestResultDTO::getPassed)
                 .map(UserTestResultDTO::getLesson)
-                .filter(book -> book.getLevel() == userLevel)
+                .filter(book -> book.getLevel() == user.getLevel())
                 .filter(result -> result.getType() == type)
                 .count();
 

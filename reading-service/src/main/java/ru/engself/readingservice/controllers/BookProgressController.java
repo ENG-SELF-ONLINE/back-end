@@ -30,8 +30,7 @@ public class BookProgressController {
 
     @GetMapping("/percent")
     public ResponseEntity<Integer> getBookProgressPercentByUserId(Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(bookProgressService.getBookProgressPercentByUserId(userId), HttpStatus.OK);
+        return new ResponseEntity<>(bookProgressService.getBookProgressPercentByUserId(authentication), HttpStatus.OK);
     }
 
     @PostMapping("/{bookId}/mark-completed")
@@ -48,8 +47,7 @@ public class BookProgressController {
 
     @PostMapping
     public ResponseEntity<BookProgressDTO> createBookProgress(@RequestBody BookDTO bookDTO, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(bookProgressService.createBookProgress(bookDTO, userId), HttpStatus.OK);
+        return new ResponseEntity<>(bookProgressService.createBookProgress(bookDTO, authentication), HttpStatus.OK);
     }
 
 }

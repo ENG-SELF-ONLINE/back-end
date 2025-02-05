@@ -8,8 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 public class DictionaryServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DictionaryServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DictionaryServiceApplication.class, args);
+    }
 
 }

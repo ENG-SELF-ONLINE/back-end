@@ -10,7 +10,6 @@ import ru.engself.dictionaryservice.dtos.CommonWordDTO;
 import ru.engself.dictionaryservice.dtos.DeckDTO;
 import ru.engself.dictionaryservice.dtos.WordDTO;
 import ru.engself.dictionaryservice.enums.BucketEnum;
-import ru.engself.dictionaryservice.exceptions.DeckNotFoundException;
 import ru.engself.dictionaryservice.mappers.WordMapper;
 import ru.engself.dictionaryservice.repositories.WordRepository;
 import ru.engself.dictionaryservice.services.CommonWordService;
@@ -73,10 +72,8 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public WordDTO updateWordById(UUID wordId, WordDTO wordDTO, UUID userId) {
+
         WordDTO currentWord = getWordById(wordId, userId);
-
-        System.out.println(currentWord);
-
         String translation = wordDTO.getWordTranslation();
 
         if (translation != null) {

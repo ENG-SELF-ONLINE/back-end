@@ -35,9 +35,11 @@ public class KeycloakSecurityConfig {
                                         "/swagger-ui/**",
                                         "/webjars/**",
                                         "/swagger-ui.html",
-                                        "/users/**"
+                                        "/users"
                                 ).permitAll()
-//                                .requestMatchers("/users/api/**").hasRole("user")
+                                .requestMatchers("/users/api/**").hasRole("user")
+                                .requestMatchers("/friendships/**").hasRole("user")
+                                .requestMatchers("/notifications/**").hasRole("user")
                                 .anyRequest()
                                 .authenticated()
                 )

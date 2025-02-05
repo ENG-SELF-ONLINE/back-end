@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.engself.readingservice.dtos.BookDTO;
 import ru.engself.readingservice.dtos.BookProgressDTO;
@@ -13,10 +14,13 @@ import ru.engself.readingservice.enums.Level;
 import ru.engself.readingservice.mappers.BookProgressMapper;
 import ru.engself.readingservice.repositories.BookProgressRepository;
 import ru.engself.readingservice.services.BookProgressService;
+import ru.engself.readingservice.utils.feigns.ProfileFeignController;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
+import static ru.engself.readingservice.utils.AuthenticationUtils.getAuthorizationHeader;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class BookProgressServiceImpl implements BookProgressService {
 
     private final BookProgressRepository bookProgressRepository;
     private final BookProgressMapper bookProgressMapper;
+    private final ProfileFeignController profileFeignController;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
 
@@ -58,16 +63,14 @@ public class BookProgressServiceImpl implements BookProgressService {
 
     @Override
     @Transactional
-    public BookProgressDTO createBookProgress(BookDTO bookDTO, UUID userId) {
+    public BookProgressDTO createBookProgress(BookDTO bookDTO, Authentication authentication) {
+
+        UserDTO user = profileFeignController.getUserById(getAuthorizationHeader(authentication));
 
         BookProgressDTO bookProgress = BookProgressDTO.builder()
                 .book(bookDTO)
                 .isCompleted(false)
-                .userInfo(
-                        UserDTO.builder()
-                                .userId(userId)
-                                .build()
-                )
+                .userInfo(user)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -85,32 +88,28 @@ public class BookProgressServiceImpl implements BookProgressService {
     }
 
     @Override
-    public Integer getBookProgressPercentByUserId(UUID userId) {
-        List<BookProgressDTO> bookProgresses = getAllBookProgressesByUserId(userId);
+    public Integer getBookProgressPercentByUserId(Authentication authentication) {
 
-//        UserDTO userInfo = UserDTO.builder()
-//                .userId(userId)
-//                .build();
+        UserDTO user = profileFeignController.getUserById(getAuthorizationHeader(authentication));
+        List<BookProgressDTO> bookProgresses = getAllBookProgressesByUserId(user.getUserId());
 
-//        if (userInfo == null || userInfo.getLevel() == null) {
-//            return 0; // Return 0% if user level or userInfo is null
-//        }
-
-        Level userLevel = Level.B1;
+        if (user.getLevel() == null) {
+            return 0;
+        }
 
         long totalBooksOnLevel = bookProgresses.stream()
                 .map(BookProgressDTO::getBook)
-                .filter(book -> book.getLevel() == userLevel)
+                .filter(book -> book.getLevel() == user.getLevel())
                 .count();
 
         if (totalBooksOnLevel == 0) {
-            return 0; // Return 0% if there are no books on user's level
+            return 0;
         }
 
         long completedBooksOnLevel = bookProgresses.stream()
                 .filter(BookProgressDTO::getIsCompleted)
                 .map(BookProgressDTO::getBook)
-                .filter(book -> book.getLevel() == userLevel)
+                .filter(book -> book.getLevel() == user.getLevel())
                 .count();
 
         return (int) Math.round((double) completedBooksOnLevel / totalBooksOnLevel * 100);

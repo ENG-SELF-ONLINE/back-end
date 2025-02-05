@@ -1,5 +1,6 @@
 package ru.engself.readingservice.services;
 
+import org.springframework.security.core.Authentication;
 import ru.engself.readingservice.dtos.BookDTO;
 import ru.engself.readingservice.dtos.BookProgressDTO;
 
@@ -12,9 +13,9 @@ public interface BookProgressService {
 
     BookProgressDTO unmarkBookAsCompleted(UUID bookId, UUID userId);
 
-    BookProgressDTO createBookProgress(BookDTO bookDTO, UUID userId);
+    BookProgressDTO createBookProgress(BookDTO bookDTO, Authentication authentication);
 
     List<BookProgressDTO> getAllBookProgressesByUserId(UUID userId);
 
-    Integer getBookProgressPercentByUserId(UUID userId);
+    Integer getBookProgressPercentByUserId(Authentication authentication);
 }

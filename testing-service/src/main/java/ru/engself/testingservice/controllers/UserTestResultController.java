@@ -25,8 +25,7 @@ public class UserTestResultController {
     @PostMapping("/lessons/{lessonId}")
     public ResponseEntity<UserTestResultDTO> createUserTestResult(@RequestBody UserTestResultDTO userTestResultDTO,
                                                                   @PathVariable("lessonId") UUID lessonId, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(userTestResultService.createUserTestResult(userTestResultDTO, lessonId, userId), HttpStatus.OK);
+        return new ResponseEntity<>(userTestResultService.createUserTestResult(userTestResultDTO, lessonId, authentication), HttpStatus.OK);
     }
 
     @PostMapping("/lessons/{lessonId}/mark-passed")
@@ -55,8 +54,7 @@ public class UserTestResultController {
 
     @GetMapping("/percent")
     public ResponseEntity<Integer> getBookProgressPercentByUserIdAndType(LessonType type, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(userTestResultService.getBookProgressPercentByUserIdAndType(type, userId), HttpStatus.OK);
+        return new ResponseEntity<>(userTestResultService.getBookProgressPercentByUserIdAndType(type, authentication), HttpStatus.OK);
     }
 
     @PutMapping("/{userTestResultId}")

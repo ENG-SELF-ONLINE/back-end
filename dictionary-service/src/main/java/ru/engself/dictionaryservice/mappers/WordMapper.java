@@ -1,7 +1,6 @@
 package ru.engself.dictionaryservice.mappers;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import ru.engself.dictionaryservice.dtos.WordDTO;
 import ru.engself.dictionaryservice.entities.Word;
 

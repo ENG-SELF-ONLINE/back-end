@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import ru.engself.readingservice.enums.Level;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -15,4 +17,17 @@ public class UserDTO {
 
     private UUID userId;
 
+    private String email;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String photo;
+
+    private Level level;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

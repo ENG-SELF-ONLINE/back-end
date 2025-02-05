@@ -11,7 +11,9 @@ import ru.engself.readingservice.mappers.DifficultWordMapper;
 import ru.engself.readingservice.repositories.DifficultWordRepository;
 import ru.engself.readingservice.services.DifficultWordService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +45,5 @@ public class DifficultWordServiceImpl implements DifficultWordService {
                 .map(difficultWordMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
 
 }

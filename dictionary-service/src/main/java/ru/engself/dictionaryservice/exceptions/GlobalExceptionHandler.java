@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -40,8 +39,7 @@ public class GlobalExceptionHandler {
                             errorResponse.getError().getMessage()
                     );
                 }
-            }
-            catch (JsonProcessingException ex){
+            } catch (JsonProcessingException ex) {
                 errorMessage = "Не удалось разобрать ответ ошибки: " + e.contentUTF8();
             }
         }

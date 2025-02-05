@@ -3,7 +3,6 @@ package ru.engself.dictionaryservice.dtos;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,8 +17,6 @@ public class DeckDTO {
     private String deckName;
 
     private String deckPhoto;
-
-//    private List<WordDTO> deckWords;
 
     private UserDTO userInfo;
 

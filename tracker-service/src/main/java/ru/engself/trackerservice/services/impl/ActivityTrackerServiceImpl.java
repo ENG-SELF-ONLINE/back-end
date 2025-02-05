@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import ru.engself.trackerservice.dtos.ActivityStatsDTO;
 import ru.engself.trackerservice.dtos.ActivityTrackerDTO;
@@ -25,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static ru.engself.trackerservice.utils.AuthenticationUtils.getAuthorizationHeader;
 import static ru.engself.trackerservice.utils.AuthenticationUtils.getUserIdFromAuthentication;
 
 @Service
@@ -138,11 +138,4 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
                 .build();
     }
 
-    private String getAuthorizationHeader(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            return "Bearer " + jwt.getTokenValue();
-        } else {
-            return null;
-        }
-    }
 }
