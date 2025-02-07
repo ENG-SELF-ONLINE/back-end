@@ -13,11 +13,16 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActivityStatsDTO {
-
-    private Map<String, List<Integer>> activities;
-
+    private Map<String, List<ActivityValue>> activities;
     private DeckStatisticsDTO deckStatisticsDTO;
+    private double totalTime;
 
-    private int totalTime;
-
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ActivityValue {
+        private String date;
+        private int value;
+    }
 }

@@ -19,6 +19,8 @@ import ru.engself.trackerservice.utils.feigns.ProfileFeignController;
 import javax.ws.rs.NotFoundException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -114,7 +116,6 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
 
     @Override
     public ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication) {
-
         UUID userId = getUserIdFromAuthentication(authentication);
 
         List<ActivityTracker> activities = activityTrackerRepository
@@ -122,15 +123,18 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
 
         DeckStatisticsDTO deckStatistics = dictionaryFeignController.getStatisticsByPeriod(startDate, endDate, getAuthorizationHeader(authentication));
 
-
-        Map<String, List<Integer>> activitiesMap = activities.stream()
+        Map<String, List<ActivityStatsDTO.ActivityValue>> activitiesMap = activities.stream()
                 .collect(Collectors.groupingBy(
                         activity -> activity.getActivityType().name().toLowerCase(),
-                        Collectors.mapping(activity -> activity.getDuration().intValue(), Collectors.toList())
+                        Collectors.mapping(activity -> ActivityStatsDTO.ActivityValue.builder()
+                                        .date(activity.getStartTime().toString())
+                                        .value(activity.getDuration().intValue())
+                                        .build(),
+                                Collectors.toList())
                 ));
 
-        int totalTime = activities.stream()
-                .mapToInt(activity -> activity.getDuration().intValue())
+        double totalTime = activities.stream()
+                .mapToDouble(activity -> activity.getDuration().doubleValue() / 60.0)
                 .sum();
 
         return ActivityStatsDTO.builder()
