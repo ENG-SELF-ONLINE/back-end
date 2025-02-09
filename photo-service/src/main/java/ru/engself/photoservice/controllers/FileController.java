@@ -44,6 +44,11 @@ public class FileController {
         return downloadFile(file, bucket.getBucketName(), "image/jpeg", "inline");
     }
 
+    @GetMapping(path = "/audios/show")
+    public ResponseEntity<ByteArrayResource> showAudio(@RequestParam(value = "file") String file, BucketEnum bucket) {
+        return downloadFile(file, bucket.getBucketName(), "audio/mpeg", "inline");
+    }
+
     @GetMapping(path = "/pdf/download")
     public ResponseEntity<ByteArrayResource> downloadPdf(@RequestParam(value = "file") String file, BucketEnum bucket) {
         return downloadFile(file, bucket.getBucketName(), "application/pdf", "attachment");

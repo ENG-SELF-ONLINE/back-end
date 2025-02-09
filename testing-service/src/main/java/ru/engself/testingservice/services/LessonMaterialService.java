@@ -15,4 +15,6 @@ public interface LessonMaterialService {
     String deleteLessonMaterialById(UUID lessonMaterialId, UUID userId);
 
     LessonMaterialDTO updateLessonMaterialById(UUID lessonMaterialId, LessonMaterialDTO lessonMaterialDTO, UUID userId);
+
+    LessonMaterialDTO getLessonMaterialByLessonId(UUID lessonId, UUID userId);
 }

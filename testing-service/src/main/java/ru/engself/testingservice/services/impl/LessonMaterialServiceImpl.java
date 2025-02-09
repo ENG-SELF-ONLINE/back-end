@@ -86,6 +86,13 @@ public class LessonMaterialServiceImpl implements LessonMaterialService {
     }
 
     @Override
+    public LessonMaterialDTO getLessonMaterialByLessonId(UUID lessonId, UUID userId) {
+        return lessonMaterialRepository.findLessonMaterialByLessonLessonId(lessonId).map(lessonMaterialMapper::toDTO).orElseThrow(
+                () -> new EntityNotFoundException("There is no LessonMaterial with lessonId: " + lessonId)
+        );
+    }
+
+    @Override
     public String deleteLessonMaterialById(UUID lessonMaterialId, UUID userId) {
 
         if (lessonMaterialRepository.findById(lessonMaterialId).isEmpty()) {

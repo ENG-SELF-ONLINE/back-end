@@ -1,6 +1,8 @@
 package ru.engself.authservice.controllers;
 
 
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,28 @@ public class UserController {
                 LOG.warn("Invalid account. User probably hasn't verified email.", ex);
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
+        }
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody String refreshToken) {
+        try {
+            JsonNode tokenResponse = kcProvider.refreshToken(refreshToken);
+            return ResponseEntity.ok(tokenResponse);
+        } catch (UnirestException e) {
+            LOG.error("Failed to refresh token", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody String refreshToken) {
+        try {
+            kcProvider.logout(refreshToken);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LOG.error("Logout failed", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

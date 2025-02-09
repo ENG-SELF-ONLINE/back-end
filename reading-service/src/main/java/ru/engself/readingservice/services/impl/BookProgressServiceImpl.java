@@ -119,4 +119,11 @@ public class BookProgressServiceImpl implements BookProgressService {
         return (int) Math.round((double) completedBooksOnLevel / totalBooksOnLevel * 100);
     }
 
+    @Override
+    public BookProgressDTO getBookProgressByBookId(UUID bookId, Authentication authentication) {
+        return bookProgressRepository.findBookProgressByBookBookId(bookId).map(bookProgressMapper::toDTO).orElseThrow(
+                () -> new EntityNotFoundException("There is no BookProgress with bookId: " + bookId)
+        );
+    }
+
 }

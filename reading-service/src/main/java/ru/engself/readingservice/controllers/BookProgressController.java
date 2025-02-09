@@ -33,6 +33,11 @@ public class BookProgressController {
         return new ResponseEntity<>(bookProgressService.getBookProgressPercentByUserId(authentication), HttpStatus.OK);
     }
 
+    @GetMapping("/books/{bookId}")
+    public ResponseEntity<BookProgressDTO> getBookProgressByBookId(@PathVariable("bookId") UUID bookId, Authentication authentication) {
+        return new ResponseEntity<>(bookProgressService.getBookProgressByBookId(bookId, authentication), HttpStatus.OK);
+    }
+
     @PostMapping("/{bookId}/mark-completed")
     public ResponseEntity<BookProgressDTO> markBookAsCompleted(@PathVariable("bookId") UUID bookId, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);

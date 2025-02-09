@@ -34,6 +34,12 @@ public class LessonMaterialController {
         return new ResponseEntity<>(lessonMaterialService.getLessonMaterialById(lessonMaterialId, userId), HttpStatus.OK);
     }
 
+    @GetMapping("/lessons/{lessonId}")
+    public ResponseEntity<LessonMaterialDTO> getLessonMaterialByLessonId(@PathVariable("lessonId") UUID lessonId, Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        return new ResponseEntity<>(lessonMaterialService.getLessonMaterialByLessonId(lessonId, userId), HttpStatus.OK);
+    }
+
     @GetMapping("/{lessonMaterialId}/details")
     public ResponseEntity<LessonDetailsDTO> getLessonDetailsByLessonMaterialId(@PathVariable("lessonMaterialId") UUID lessonMaterialId, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);

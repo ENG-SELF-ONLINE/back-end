@@ -16,4 +16,6 @@ public interface BookProgressRepository extends JpaRepository<BookProgress, UUID
     @Query(value = "SELECT * FROM book_progress WHERE (user_info->>'userId')::uuid = :userId", nativeQuery = true)
     List<BookProgress> findBookProgressesByUserInfoUserId(UUID userId);
 
+    Optional<BookProgress> findBookProgressByBookBookId(UUID book_bookId);
+
 }
