@@ -26,4 +26,11 @@ public class CommonWordController {
         return new ResponseEntity<>(commonWordService.getOrCreateCommonWord(word, userId), HttpStatus.OK);
     }
 
+    @GetMapping("/translate/{word}")
+    public ResponseEntity<String> translateWord(@PathVariable("word") String word, @RequestParam("targetLanguage") String targetLanguage,
+                                                @RequestParam("sourceLanguage") String sourceLanguage, Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        return new ResponseEntity<>(commonWordService.translateWord(word, targetLanguage, sourceLanguage, userId), HttpStatus.OK);
+    }
+
 }

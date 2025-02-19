@@ -46,7 +46,6 @@ translator:
     host: deep-translate1.p.rapidapi.com
     key: 4ec41f8239mshcb8f523d7644712p1a19a7jsn6036757bdf80
     url: https://deep-translate1.p.rapidapi.com
-  target-language: ru
 
 server:
   port: 8081

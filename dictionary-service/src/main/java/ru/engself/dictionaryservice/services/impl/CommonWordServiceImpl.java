@@ -39,15 +39,12 @@ public class CommonWordServiceImpl implements CommonWordService {
     @Value("${translator.rapidapi.key}")
     private String translatorRapidApiKey;
 
-    @Value("${translator.target-language}")
-    private String targetLanguage;
-
     @Override
     public CommonWordDTO getOrCreateCommonWord(String word, UUID userId) {
-        return commonWordRepository.findByWordName(word)
+        return commonWordRepository.findByWordName(word.toLowerCase())
                 .map(commonWordMapper::toDTO)
                 .orElseGet(() -> {
-                    CommonWordDTO commonWord = getCommonWordFromApi(word);
+                    CommonWordDTO commonWord = getCommonWordFromApi(word.toLowerCase());
                     if (commonWord != null) {
                         commonWord = commonWordMapper.toDTO(
                                 commonWordRepository.save(commonWordMapper.toEntity(commonWord))
@@ -55,6 +52,11 @@ public class CommonWordServiceImpl implements CommonWordService {
                     }
                     return commonWord;
                 });
+    }
+
+    @Override
+    public String translateWord(String word, String targetLanguage, String sourceLanguage, UUID userId) {
+        return getTranslation(word, targetLanguage, sourceLanguage);
     }
 
     private CommonWordDTO getCommonWordFromApi(String word) {
@@ -66,7 +68,7 @@ public class CommonWordServiceImpl implements CommonWordService {
 
         DictionaryResponse dictionaryResponse = dictionaryResponseList.get(0);
         String transcription = getTranscription(dictionaryResponse);
-        String translatedText = getTranslation(word);
+        String translatedText = getTranslation(word, "ru", "en");
 
 
         return unsplashService.searchAndSavePhoto(word, BucketEnum.WORDS)
@@ -90,9 +92,9 @@ public class CommonWordServiceImpl implements CommonWordService {
                 .orElse(null);
     }
 
-    private String getTranslation(String word) {
+    private String getTranslation(String word, String targetLanguage, String sourceLanguage) {
         try {
-            String requestBody = String.format("{\"q\":\"%s\",\"source\":\"en\",\"target\":\"%s\"}", word, targetLanguage);
+            String requestBody = String.format("{\"q\":\"%s\",\"source\":\"%s\",\"target\":\"%s\"}", word, sourceLanguage, targetLanguage);
 
             TranslationResponse translationResponse = translatorFeignClient.translate(
                     translatorRapidApiKey,

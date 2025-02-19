@@ -8,4 +8,5 @@ public interface CommonWordService {
 
     CommonWordDTO getOrCreateCommonWord(String word, UUID userId);
 
+    String translateWord(String word, String targetLanguage, String sourceLanguage, UUID userId);
 }
