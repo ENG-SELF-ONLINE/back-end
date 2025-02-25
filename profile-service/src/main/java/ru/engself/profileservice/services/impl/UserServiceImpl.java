@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
         UserDTO user = getUserById(userId);
         int nextPosition = user.getLevel().ordinal() + 1;
 
-        return C2.equals(user.getLevel()) ?
+        return !C2.equals(user.getLevel()) ?
                 Level.values()[nextPosition].name() : "";
     }
 

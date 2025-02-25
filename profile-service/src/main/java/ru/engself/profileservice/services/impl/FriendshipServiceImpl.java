@@ -40,6 +40,10 @@ public class FriendshipServiceImpl implements FriendshipService {
         UserDTO sender = userService.getUserById(userId);
         UserDTO receiver = userService.getUserById(recipientId);
 
+        if (userId.equals(receiver.getUserId())) {
+            throw new IllegalStateException("You can't make a friend request to yourself.");
+        }
+
         Optional<Friendship> existingFriendship = friendshipRepository.findExistingFriendship(userId, recipientId);
 
         if (existingFriendship.isPresent()) {
