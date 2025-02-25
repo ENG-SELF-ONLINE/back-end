@@ -20,4 +20,6 @@ public interface StatisticsService {
     Integer getBookProgressPercentByUserIdAndType(LessonType type, Authentication authentication);
 
     ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication);
+
+    Integer getProgressBarByUserId(Authentication authentication);
 }

@@ -51,6 +51,11 @@ public class StatisticsController {
         return new ResponseEntity<>(statisticsService.getBookProgressPercentByUserIdAndType(type, authentication), HttpStatus.OK);
     }
 
+    @GetMapping("/common-progress/percent")
+    public ResponseEntity<Integer> getProgressBarByUserId(Authentication authentication) {
+        return new ResponseEntity<>(statisticsService.getProgressBarByUserId(authentication), HttpStatus.OK);
+    }
+
     @GetMapping("/activity")
     public ResponseEntity<ActivityStatsDTO> getActivityStats(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,

@@ -124,4 +124,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         return activityStats;
     }
+
+    @Override
+    public Integer getProgressBarByUserId(Authentication authentication) {
+        Integer bookProgress = getBookProgressPercentByUserId(authentication);
+        Integer listeningProgress = getBookProgressPercentByUserIdAndType(LessonType.LISTENING, authentication);
+        Integer grammarProgress = getBookProgressPercentByUserIdAndType(LessonType.GRAMMAR, authentication);
+
+        return (bookProgress + listeningProgress + grammarProgress) / 3;
+    }
 }
