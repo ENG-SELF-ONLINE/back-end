@@ -17,7 +17,10 @@ import java.util.UUID;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "friendships")
+@Table(name = "friendships",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"sender_id", "receiver_id"})
+        })
 public class Friendship {
 
     @Id

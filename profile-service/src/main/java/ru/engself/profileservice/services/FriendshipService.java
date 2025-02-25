@@ -3,7 +3,7 @@ package ru.engself.profileservice.services;
 import ru.engself.profileservice.dtos.FriendshipDTO;
 import ru.engself.profileservice.enums.FriendshipStatus;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface FriendshipService {
@@ -11,7 +11,7 @@ public interface FriendshipService {
 
     FriendshipDTO updateFriendRequestStatus(UUID userId, UUID friendshipId, FriendshipStatus status);
 
-    List<FriendshipDTO> getUserFriendships(UUID userId);
+    Set<FriendshipDTO> getUserFriendships(UUID userId);
 
     FriendshipDTO getFriendshipById(UUID friendshipId, UUID userId);
 

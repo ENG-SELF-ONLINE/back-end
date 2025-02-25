@@ -9,7 +9,7 @@ import ru.engself.profileservice.dtos.FriendshipDTO;
 import ru.engself.profileservice.enums.FriendshipStatus;
 import ru.engself.profileservice.services.FriendshipService;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static ru.engself.profileservice.utils.AuthenticationUtils.getUserIdFromAuthentication;
@@ -36,7 +36,7 @@ public class FriendshipController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FriendshipDTO>> getFriendships(Authentication authentication) {
+    public ResponseEntity<Set<FriendshipDTO>> getFriendships(Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(friendshipService.getUserFriendships(userId), HttpStatus.OK);
     }

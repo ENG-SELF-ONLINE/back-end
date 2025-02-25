@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.engself.profileservice.dtos.FriendshipDTO;
 import ru.engself.profileservice.dtos.NotificationDTO;
 import ru.engself.profileservice.dtos.UserDTO;
+import ru.engself.profileservice.entities.Friendship;
 import ru.engself.profileservice.enums.FriendshipStatus;
 import ru.engself.profileservice.enums.NotificationType;
 import ru.engself.profileservice.exceptions.UserNotFoundException;
@@ -18,7 +19,8 @@ import ru.engself.profileservice.services.UserService;
 
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,12 @@ public class FriendshipServiceImpl implements FriendshipService {
 
         UserDTO sender = userService.getUserById(userId);
         UserDTO receiver = userService.getUserById(recipientId);
+
+        Optional<Friendship> existingFriendship = friendshipRepository.findExistingFriendship(userId, recipientId);
+
+        if (existingFriendship.isPresent()) {
+            throw new IllegalStateException("Friend already exists.");
+        }
 
         FriendshipDTO friendship = FriendshipDTO.builder()
                 .sender(sender)
@@ -73,10 +81,10 @@ public class FriendshipServiceImpl implements FriendshipService {
     }
 
     @Override
-    public List<FriendshipDTO> getUserFriendships(UUID userId) {
+    public Set<FriendshipDTO> getUserFriendships(UUID userId) {
         return friendshipRepository.findFriendshipsByUserId(userId).stream()
                 .filter(friendship -> friendship.getStatus() == FriendshipStatus.ACCEPTED).map(friendshipMapper::toDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     @Override
