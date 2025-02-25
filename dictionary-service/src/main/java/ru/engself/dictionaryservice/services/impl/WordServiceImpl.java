@@ -74,13 +74,29 @@ public class WordServiceImpl implements WordService {
     }
 
     @Override
-    public WordDTO updateWordById(UUID wordId, WordDTO wordDTO, UUID userId) {
-
+    public WordDTO updateWordById(UUID wordId, WordDTO wordDTO, Optional<MultipartFile> file, UUID userId) {
         WordDTO currentWord = getWordById(wordId, userId);
-        String translation = wordDTO.getWordTranslation();
 
-        if (translation != null) {
-            currentWord.setWordTranslation(translation);
+        if (wordDTO.getWordTranslation() != null) {
+            currentWord.setWordTranslation(wordDTO.getWordTranslation());
+        }
+
+        if (file.isPresent()) {
+            String newPhoto;
+            try {
+                newPhoto = photoFeignController.uploadFile(file.get(), BucketEnum.WORDS).getFilename();
+            } catch (Exception e) {
+                newPhoto = currentWord.getWordPhoto();
+            }
+
+            if (!newPhoto.equals(currentWord.getWordPhoto())) {
+                String oldPhoto = currentWord.getWordPhoto();
+                currentWord.setWordPhoto(newPhoto);
+
+                if (oldPhoto != null && !oldPhoto.isEmpty()) {
+                    photoFeignController.deleteFile(oldPhoto, BucketEnum.WORDS);
+                }
+            }
         }
 
         currentWord.setUpdatedAt(LocalDateTime.now());

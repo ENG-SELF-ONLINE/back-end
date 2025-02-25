@@ -38,9 +38,11 @@ public class WordController {
     }
 
     @PutMapping("/{wordId}")
-    public ResponseEntity<WordDTO> updateWordById(@PathVariable("wordId") UUID wordId, @RequestBody WordDTO wordDTO, Authentication authentication) {
+    public ResponseEntity<WordDTO> updateWordById(
+            @PathVariable("wordId") UUID wordId, @RequestPart WordDTO wordDTO,
+            @RequestPart(value = "file", required = false) MultipartFile file, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(wordService.updateWordById(wordId, wordDTO, userId), HttpStatus.OK);
+        return new ResponseEntity<>(wordService.updateWordById(wordId, wordDTO, Optional.ofNullable(file), userId), HttpStatus.OK);
     }
 
 }
