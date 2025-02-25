@@ -27,7 +27,7 @@ public class WordProgress {
     @GenericGenerator(name = "uuid-hibernate-generator", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID wordProgressId;
 
-    @OneToOne(cascade = CascadeType.DETACH)
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.REMOVE})
     @JoinColumn(name = "word_id", referencedColumnName = "word_id")
     private Word word;
 
