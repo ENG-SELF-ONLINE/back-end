@@ -30,8 +30,6 @@ public interface WordProgressRepository extends JpaRepository<WordProgress, UUID
 
     List<WordProgress> findByWordDeckDeckId(UUID deckId);
 
-    Optional<WordProgress> findWordProgressByWordWordId(@Param("wordId") UUID wordId);
-
     @Query(value = "SELECT wp.* FROM word_progresses wp " +
             "JOIN words w ON wp.word_id = w.word_id " +
             "JOIN decks d ON w.deck_id = d.deck_id " +

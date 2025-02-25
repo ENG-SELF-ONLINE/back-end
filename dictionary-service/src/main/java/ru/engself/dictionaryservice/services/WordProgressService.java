@@ -23,8 +23,8 @@ public interface WordProgressService {
     WordProgressDTO createWordProgress(WordDTO wordDTO, UUID userId);
 
     WordProgressDTO getWordProgressById(UUID wordProgressId, UUID userId);
-
-    WordProgressDTO getWordProgressByWordId(UUID wordId, UUID userId);
-
+    
     DeckStatisticsDTO getStatisticsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UUID userId);
+
+    String deleteWordProgressById(UUID wordProgressId, UUID userId);
 }

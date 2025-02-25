@@ -10,6 +10,7 @@ import ru.engself.dictionaryservice.dtos.WordProgressDTO;
 import ru.engself.dictionaryservice.entities.WordProgress;
 import ru.engself.dictionaryservice.enums.WordReviewResult;
 import ru.engself.dictionaryservice.enums.WordStatus;
+import ru.engself.dictionaryservice.exceptions.DeckNotFoundException;
 import ru.engself.dictionaryservice.exceptions.WordProgressNotFoundException;
 import ru.engself.dictionaryservice.mappers.WordProgressMapper;
 import ru.engself.dictionaryservice.repositories.WordProgressRepository;
@@ -116,15 +117,6 @@ public class WordProgressServiceImpl implements WordProgressService {
     }
 
     @Override
-    public WordProgressDTO getWordProgressByWordId(UUID wordId, UUID userId) {
-        WordProgress wordProgress = wordProgressRepository.findWordProgressByWordWordId(wordId).orElseThrow(
-                () -> new WordProgressNotFoundException("There is no wordProgress with id: " + wordId)
-        );
-
-        return wordProgressMapper.toDTO(wordProgress);
-    }
-
-    @Override
     public DeckStatisticsDTO getStatisticsByPeriod(LocalDateTime startDate, LocalDateTime endDate, UUID userId) {
         List<WordProgressDTO> wordProgressDTOs = wordProgressRepository
                 .findAllWordProgressesByUserIdAndDateRange(userId, startDate, endDate)
@@ -132,6 +124,21 @@ public class WordProgressServiceImpl implements WordProgressService {
                 .map(wordProgressMapper::toDTO)
                 .collect(Collectors.toList());
         return calculateStatistics(wordProgressDTOs);
+    }
+
+    @Override
+    public String deleteWordProgressById(UUID wordProgressId, UUID userId) {
+        if (wordProgressRepository.findById(wordProgressId).isEmpty()) {
+            throw new DeckNotFoundException("There is no word with id: " + wordProgressId);
+        }
+
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_period", userId));
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_deck", userId));
+        kafkaTemplate.send("word-progress-updates", generateKeyPrefix("deck_statistics_user", userId));
+        kafkaTemplate.send("activity-updates", generateKeyPrefix("activity_stats", userId));
+
+        wordProgressRepository.deleteById(wordProgressId);
+        return "successful deleted";
     }
 
     private DeckStatisticsDTO calculateStatistics(List<WordProgressDTO> wordProgressDTOs) {

@@ -50,12 +50,6 @@ public class WordProgressController {
         return new ResponseEntity<>(wordProgressService.getWordProgressById(wordProgressId, userId), HttpStatus.OK);
     }
 
-    @GetMapping("/words/{wordId}")
-    public ResponseEntity<WordProgressDTO> getWordProgressByWordId(@PathVariable("wordId") UUID wordId, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(wordProgressService.getWordProgressByWordId(wordId, userId), HttpStatus.OK);
-    }
-
     @GetMapping("/decks/{deckId}/next")
     public ResponseEntity<List<WordProgressDTO>> getNextWords(@PathVariable UUID deckId, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
@@ -82,6 +76,12 @@ public class WordProgressController {
         UUID userId = getUserIdFromAuthentication(authentication);
         wordProgressService.updateWordProgress(wordProgressId, result, userId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{wordProgressId}")
+    public ResponseEntity<String> deleteWordProgressById(@PathVariable("wordProgressId") UUID wordProgressId, Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        return new ResponseEntity<>(wordProgressService.deleteWordProgressById(wordProgressId, userId), HttpStatus.OK);
     }
 
 }
