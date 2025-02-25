@@ -42,26 +42,30 @@ public class StatisticsController {
     }
 
     @GetMapping("/book-progress/percent")
-    public ResponseEntity<Integer> getBookProgressPercentByUserId(Authentication authentication) {
-        return new ResponseEntity<>(statisticsService.getBookProgressPercentByUserId(authentication), HttpStatus.OK);
+    public ResponseEntity<Integer> getBookProgressPercentByUserId(@RequestParam(value = "userId", required = false) UUID userId,
+                                                                  Authentication authentication) {
+        return new ResponseEntity<>(statisticsService.getBookProgressPercentByUserId(userId, authentication), HttpStatus.OK);
     }
 
     @GetMapping("/testing-progress/percent")
-    public ResponseEntity<Integer> getBookProgressPercentByUserIdAndType(LessonType type, Authentication authentication) {
-        return new ResponseEntity<>(statisticsService.getBookProgressPercentByUserIdAndType(type, authentication), HttpStatus.OK);
+    public ResponseEntity<Integer> getBookProgressPercentByUserIdAndType(@RequestParam(value = "userId", required = false) UUID userId,
+                                                                         LessonType type, Authentication authentication) {
+        return new ResponseEntity<>(statisticsService.getBookProgressPercentByUserIdAndType(userId, type, authentication), HttpStatus.OK);
     }
 
     @GetMapping("/common-progress/percent")
-    public ResponseEntity<Integer> getProgressBarByUserId(Authentication authentication) {
-        return new ResponseEntity<>(statisticsService.getProgressBarByUserId(authentication), HttpStatus.OK);
+    public ResponseEntity<Integer> getProgressBarByUserId(@RequestParam(value = "userId", required = false) UUID userId,
+                                                          Authentication authentication) {
+        return new ResponseEntity<>(statisticsService.getProgressBarByUserId(userId, authentication), HttpStatus.OK);
     }
 
     @GetMapping("/activity")
     public ResponseEntity<ActivityStatsDTO> getActivityStats(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(value = "userId", required = false) UUID userId,
             Authentication authentication) {
-        return new ResponseEntity<>(statisticsService.getActivityStats(startDate, endDate, authentication), HttpStatus.OK);
+        return new ResponseEntity<>(statisticsService.getActivityStats(userId, startDate, endDate, authentication), HttpStatus.OK);
     }
 
 }

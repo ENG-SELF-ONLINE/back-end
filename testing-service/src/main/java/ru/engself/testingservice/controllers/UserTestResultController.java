@@ -53,8 +53,8 @@ public class UserTestResultController {
     }
 
     @GetMapping("/percent")
-    public ResponseEntity<Integer> getBookProgressPercentByUserIdAndType(LessonType type, Authentication authentication) {
-        return new ResponseEntity<>(userTestResultService.getBookProgressPercentByUserIdAndType(type, authentication), HttpStatus.OK);
+    public ResponseEntity<Integer> getBookProgressPercentByUserIdAndType(@RequestParam(value = "userId", required = false) UUID userId, LessonType type, Authentication authentication) {
+        return new ResponseEntity<>(userTestResultService.getBookProgressPercentByUserIdAndType(userId, type, authentication), HttpStatus.OK);
     }
 
     @PutMapping("/{userTestResultId}")

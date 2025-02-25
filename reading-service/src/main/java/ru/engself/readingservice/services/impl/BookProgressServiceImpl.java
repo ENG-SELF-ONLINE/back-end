@@ -68,7 +68,7 @@ public class BookProgressServiceImpl implements BookProgressService {
     @Transactional
     public BookProgressDTO createBookProgress(BookDTO bookDTO, Authentication authentication) {
 
-        UserDTO user = profileFeignController.getUserById(getAuthorizationHeader(authentication));
+        UserDTO user = profileFeignController.getUserById(null, getAuthorizationHeader(authentication));
 
         BookProgressDTO bookProgress = BookProgressDTO.builder()
                 .book(bookDTO)
@@ -92,9 +92,9 @@ public class BookProgressServiceImpl implements BookProgressService {
     }
 
     @Override
-    public Integer getBookProgressPercentByUserId(Authentication authentication) {
+    public Integer getBookProgressPercentByUserId(UUID userId, Authentication authentication) {
 
-        UserDTO user = profileFeignController.getUserById(getAuthorizationHeader(authentication));
+        UserDTO user = profileFeignController.getUserById(userId, getAuthorizationHeader(authentication));
         List<BookProgressDTO> bookProgresses = getAllBookProgressesByUserId(user.getUserId());
 
         if (user.getLevel() == null) {

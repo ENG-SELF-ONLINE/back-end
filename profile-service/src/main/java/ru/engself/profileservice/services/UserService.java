@@ -20,5 +20,5 @@ public interface UserService {
 
     UserDTO updateUserPhoto(MultipartFile image, UUID userId);
 
-    String getUserNextLevel(UUID userId);
+    String getUserNextLevel(UUID friendId,UUID userId);
 }

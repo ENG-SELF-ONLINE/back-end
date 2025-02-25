@@ -115,8 +115,12 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
     }
 
     @Override
-    public ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
+    public ActivityStatsDTO getActivityStats(UUID friendId, LocalDateTime startDate, LocalDateTime endDate, Authentication authentication) {
+        UUID userId;
+
+        if (friendId != null) {
+            userId = friendId;
+        } else userId = getUserIdFromAuthentication(authentication);
 
         List<ActivityTracker> activities = activityTrackerRepository
                 .findActivitiesByUserIdAndDateRange(userId, startDate, endDate);

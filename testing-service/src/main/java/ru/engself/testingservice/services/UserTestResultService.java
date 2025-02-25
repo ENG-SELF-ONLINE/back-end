@@ -22,5 +22,5 @@ public interface UserTestResultService {
 
     List<UserTestResultDTO> getAllUserTestResultsByUserId(UUID userId);
 
-    Integer getBookProgressPercentByUserIdAndType(LessonType type, Authentication authentication);
+    Integer getBookProgressPercentByUserIdAndType(UUID userId, LessonType type, Authentication authentication);
 }

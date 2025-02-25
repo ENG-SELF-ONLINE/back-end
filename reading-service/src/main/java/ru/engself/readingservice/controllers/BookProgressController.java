@@ -29,8 +29,9 @@ public class BookProgressController {
     }
 
     @GetMapping("/percent")
-    public ResponseEntity<Integer> getBookProgressPercentByUserId(Authentication authentication) {
-        return new ResponseEntity<>(bookProgressService.getBookProgressPercentByUserId(authentication), HttpStatus.OK);
+    public ResponseEntity<Integer> getBookProgressPercentByUserId(@RequestParam(value = "userId", required = false) UUID userId,
+                                                                  Authentication authentication) {
+        return new ResponseEntity<>(bookProgressService.getBookProgressPercentByUserId(userId, authentication), HttpStatus.OK);
     }
 
     @GetMapping("/books/{bookId}")

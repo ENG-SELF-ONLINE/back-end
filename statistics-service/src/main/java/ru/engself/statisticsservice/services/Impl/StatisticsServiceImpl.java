@@ -78,15 +78,21 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Integer getBookProgressPercentByUserId(Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
+    public Integer getBookProgressPercentByUserId(UUID friendId, Authentication authentication) {
+
+        UUID userId;
+
+        if (friendId != null) {
+            userId = friendId;
+        } else userId = getUserIdFromAuthentication(authentication);
+
         String authorizationHeader = getAuthorizationHeader(authentication);
         String key = generateKey("book_progress", userId);
 
         Integer percent = (Integer) redisService.getCachedStats(key);
 
         if (percent == null) {
-            percent = readingFeignController.getBookProgressPercentByUserId(authorizationHeader);
+            percent = readingFeignController.getBookProgressPercentByUserId(userId, authorizationHeader);
             redisService.cacheStats(key, percent);
         }
 
@@ -94,15 +100,21 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Integer getBookProgressPercentByUserIdAndType(LessonType type, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
+    public Integer getBookProgressPercentByUserIdAndType(UUID friendId, LessonType type, Authentication authentication) {
+
+        UUID userId;
+
+        if (friendId != null) {
+            userId = friendId;
+        } else userId = getUserIdFromAuthentication(authentication);
+
         String authorizationHeader = getAuthorizationHeader(authentication);
         String key = generateKey("test_progress_type", userId, type);
 
         Integer percent = (Integer) redisService.getCachedStats(key);
 
         if (percent == null) {
-            percent = testingFeignController.getBookProgressPercentByUserIdAndType(type, authorizationHeader);
+            percent = testingFeignController.getBookProgressPercentByUserIdAndType(userId, type, authorizationHeader);
             redisService.cacheStats(key, percent);
         }
 
@@ -110,15 +122,21 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
+    public ActivityStatsDTO getActivityStats(UUID friendId, LocalDateTime startDate, LocalDateTime endDate, Authentication authentication) {
+
+        UUID userId;
+
+        if (friendId != null) {
+            userId = friendId;
+        } else userId = getUserIdFromAuthentication(authentication);
+
         String authorizationHeader = getAuthorizationHeader(authentication);
         String key = generateKey("activity_stats", userId, startDate, endDate);
 
         ActivityStatsDTO activityStats = (ActivityStatsDTO) redisService.getCachedStats(key);
 
         if (activityStats == null) {
-            activityStats = activityTrackerFeignController.getActivityStats(startDate, endDate, authorizationHeader);
+            activityStats = activityTrackerFeignController.getActivityStats(userId, startDate, endDate, authorizationHeader);
             redisService.cacheStats(key, activityStats);
         }
 
@@ -126,10 +144,17 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Integer getProgressBarByUserId(Authentication authentication) {
-        Integer bookProgress = getBookProgressPercentByUserId(authentication);
-        Integer listeningProgress = getBookProgressPercentByUserIdAndType(LessonType.LISTENING, authentication);
-        Integer grammarProgress = getBookProgressPercentByUserIdAndType(LessonType.GRAMMAR, authentication);
+    public Integer getProgressBarByUserId(UUID friendId, Authentication authentication) {
+
+        UUID userId;
+
+        if (friendId != null) {
+            userId = friendId;
+        } else userId = getUserIdFromAuthentication(authentication);
+
+        Integer bookProgress = getBookProgressPercentByUserId(userId, authentication);
+        Integer listeningProgress = getBookProgressPercentByUserIdAndType(userId, LessonType.LISTENING, authentication);
+        Integer grammarProgress = getBookProgressPercentByUserIdAndType(userId, LessonType.GRAMMAR, authentication);
 
         return (bookProgress + listeningProgress + grammarProgress) / 3;
     }

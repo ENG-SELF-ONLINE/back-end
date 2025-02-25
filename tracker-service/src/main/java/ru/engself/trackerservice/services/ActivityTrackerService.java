@@ -19,5 +19,5 @@ public interface ActivityTrackerService {
 
     List<ActivityTrackerDTO> getAllActivities(LocalDateTime startDate, LocalDateTime endDate, UUID userId);
 
-    ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication);
+    ActivityStatsDTO getActivityStats(UUID userId, LocalDateTime startDate, LocalDateTime endDate, Authentication authentication);
 }

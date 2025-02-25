@@ -36,7 +36,7 @@ public class UserTestResultServiceImpl implements UserTestResultService {
     @Override
     public UserTestResultDTO createUserTestResult(UserTestResultDTO userTestResultDTO, UUID lessonId, Authentication authentication) {
 
-        UserDTO user = profileFeignController.getUserById(getAuthorizationHeader(authentication));
+        UserDTO user = profileFeignController.getUserById(null, getAuthorizationHeader(authentication));
         LessonDTO lessonDTO = lessonService.getLessonById(lessonId, user.getUserId());
 
         UserTestResultDTO userTestResult = UserTestResultDTO.builder()
@@ -96,9 +96,9 @@ public class UserTestResultServiceImpl implements UserTestResultService {
     }
 
     @Override
-    public Integer getBookProgressPercentByUserIdAndType(LessonType type, Authentication authentication) {
+    public Integer getBookProgressPercentByUserIdAndType(UUID userId, LessonType type, Authentication authentication) {
 
-        UserDTO user = profileFeignController.getUserById(getAuthorizationHeader(authentication));
+        UserDTO user = profileFeignController.getUserById(userId, getAuthorizationHeader(authentication));
         List<UserTestResultDTO> userTestResults = getAllUserTestResultsByUserId(user.getUserId());
 
         if (user.getLevel() == null) {

@@ -15,11 +15,11 @@ public interface StatisticsService {
 
     DeckStatisticsDTO getStatisticsByUserId(Authentication authentication);
 
-    Integer getBookProgressPercentByUserId(Authentication authentication);
+    Integer getBookProgressPercentByUserId(UUID friendId, Authentication authentication);
 
-    Integer getBookProgressPercentByUserIdAndType(LessonType type, Authentication authentication);
+    Integer getBookProgressPercentByUserIdAndType(UUID friendId, LessonType type, Authentication authentication);
 
-    ActivityStatsDTO getActivityStats(LocalDateTime startDate, LocalDateTime endDate, Authentication authentication);
+    ActivityStatsDTO getActivityStats(UUID friendId, LocalDateTime startDate, LocalDateTime endDate, Authentication authentication);
 
-    Integer getProgressBarByUserId(Authentication authentication);
+    Integer getProgressBarByUserId(UUID friendId, Authentication authentication);
 }

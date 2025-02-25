@@ -17,7 +17,7 @@ public interface BookProgressService {
 
     List<BookProgressDTO> getAllBookProgressesByUserId(UUID userId);
 
-    Integer getBookProgressPercentByUserId(Authentication authentication);
+    Integer getBookProgressPercentByUserId(UUID userId, Authentication authentication);
 
     BookProgressDTO getBookProgressByBookId(UUID bookId, Authentication authentication);
 }

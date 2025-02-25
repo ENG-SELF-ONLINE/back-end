@@ -30,8 +30,13 @@ public class UserController {
     }
 
     @GetMapping("/api")
-    public ResponseEntity<UserDTO> getUserById(Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
+    public ResponseEntity<UserDTO> getUserById(@RequestParam(value = "userId", required = false) UUID friendId, Authentication authentication) {
+        UUID userId;
+
+        if (friendId != null) {
+            userId = friendId;
+        } else userId = getUserIdFromAuthentication(authentication);
+
         return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
     }
 
@@ -42,9 +47,9 @@ public class UserController {
     }
 
     @GetMapping("/next-level")
-    public ResponseEntity<String> getUserNextLevel(Authentication authentication) {
+    public ResponseEntity<String> getUserNextLevel(@RequestParam(value = "friendId", required = false) UUID friendId, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(userService.getUserNextLevel(userId), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserNextLevel(friendId, userId), HttpStatus.OK);
     }
 
     @PutMapping("/api")

@@ -118,7 +118,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUserNextLevel(UUID userId) {
+    public String getUserNextLevel(UUID friendId, UUID userId) {
+
+        if (friendId != null) {
+            userId = friendId;
+        }
+
         UserDTO user = getUserById(userId);
         int nextPosition = user.getLevel().ordinal() + 1;
 

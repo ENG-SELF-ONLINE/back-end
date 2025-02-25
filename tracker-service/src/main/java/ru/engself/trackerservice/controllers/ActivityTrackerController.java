@@ -59,10 +59,11 @@ public class ActivityTrackerController {
 
     @GetMapping("/stats")
     public ResponseEntity<ActivityStatsDTO> getActivityStats(
+            @RequestParam(value = "userId", required = false) UUID userId,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             Authentication authentication) {
-        return new ResponseEntity<>(activityTrackerService.getActivityStats(startDate, endDate, authentication), HttpStatus.OK);
+        return new ResponseEntity<>(activityTrackerService.getActivityStats(userId, startDate, endDate, authentication), HttpStatus.OK);
     }
 
 }
