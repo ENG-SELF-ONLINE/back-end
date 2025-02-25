@@ -2,6 +2,7 @@ package ru.engself.profileservice.services;
 
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.profileservice.dtos.UserDTO;
+import ru.engself.profileservice.enums.Level;
 
 import java.util.UUID;
 
@@ -18,4 +19,6 @@ public interface UserService {
     UserDTO getUserByEmail(String email, UUID userId);
 
     UserDTO updateUserPhoto(MultipartFile image, UUID userId);
+
+    String getUserNextLevel(UUID userId);
 }

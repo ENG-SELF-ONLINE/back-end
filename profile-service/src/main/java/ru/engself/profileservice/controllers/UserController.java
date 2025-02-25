@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.profileservice.dtos.UserDTO;
+import ru.engself.profileservice.enums.Level;
 import ru.engself.profileservice.services.UserService;
 
 import java.util.UUID;
@@ -38,6 +39,12 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserByEmail(@RequestParam("email") String email, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(userService.getUserByEmail(email, userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/next-level")
+    public ResponseEntity<String> getUserNextLevel(Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        return new ResponseEntity<>(userService.getUserNextLevel(userId), HttpStatus.OK);
     }
 
     @PutMapping("/api")

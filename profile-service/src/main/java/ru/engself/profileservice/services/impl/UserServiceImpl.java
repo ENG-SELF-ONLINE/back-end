@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static ru.engself.profileservice.enums.Level.C2;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -113,6 +115,15 @@ public class UserServiceImpl implements UserService {
             photoFeignController.deleteFile(prevPhoto, BucketEnum.PROFILE);
 
         return currentUser;
+    }
+
+    @Override
+    public String getUserNextLevel(UUID userId) {
+        UserDTO user = getUserById(userId);
+        int nextPosition = user.getLevel().ordinal() + 1;
+
+        return C2.equals(user.getLevel()) ?
+                Level.values()[nextPosition].name() : "";
     }
 
     @Override
