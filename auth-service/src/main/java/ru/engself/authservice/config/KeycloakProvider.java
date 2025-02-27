@@ -1,8 +1,9 @@
 package ru.engself.authservice.config;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.AllArgsConstructor;
@@ -13,8 +14,6 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @Configuration
 @Getter
@@ -30,6 +29,8 @@ public class KeycloakProvider {
     public String clientID;
     @Value("${keycloak.credentials.secret}")
     public String clientSecret;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public Keycloak getInstance() {
         return KeycloakBuilder.builder()
@@ -53,13 +54,19 @@ public class KeycloakProvider {
 
     public JsonNode refreshToken(String refreshToken) throws UnirestException {
         String url = serverURL + "/realms/" + realm + "/protocol/openid-connect/token";
-        return Unirest.post(url)
+
+        HttpResponse<String> response = Unirest.post(url)
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .field("client_id", clientID)
                 .field("client_secret", clientSecret)
                 .field("refresh_token", refreshToken)
                 .field("grant_type", "refresh_token")
-                .asJson().getBody();
+                .asString();
+        try {
+            return objectMapper.readTree(response.getBody());
+        } catch (Exception e) {
+            throw new UnirestException("Error parsing JSON response: " + e.getMessage());
+        }
     }
 
     public void logout(String refreshToken) {

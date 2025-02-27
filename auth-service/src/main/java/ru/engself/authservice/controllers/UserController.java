@@ -1,8 +1,6 @@
 package ru.engself.authservice.controllers;
 
-
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +19,7 @@ import ru.engself.authservice.service.KeycloakAdminClientService;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
+import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
@@ -52,12 +51,14 @@ public class UserController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestBody String refreshToken) {
+    public ResponseEntity<JsonNode> refreshToken(@RequestBody Map<String, String> requestBody) {
         try {
+            String refreshToken = requestBody.get("refreshToken");
+            LOG.info("Received refresh token: {}", refreshToken);
             JsonNode tokenResponse = kcProvider.refreshToken(refreshToken);
             return ResponseEntity.ok(tokenResponse);
-        } catch (UnirestException e) {
-            LOG.error("Failed to refresh token", e);
+        } catch (Exception e) {
+            LOG.error("Error during refresh token request", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
