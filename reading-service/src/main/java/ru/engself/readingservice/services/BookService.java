@@ -1,5 +1,6 @@
 package ru.engself.readingservice.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +24,13 @@ public interface BookService {
     String deleteBookById(UUID bookId, UUID userId);
 
     ByteArrayResource downloadBook(UUID bookId, UUID userId);
+
+    @Transactional
+    void incrementDownloads(UUID bookId, UUID userId);
+
+    @Transactional
+    void incrementFavourites(UUID bookId, UUID userId);
+
+    @Transactional
+    void decrementFavourites(UUID bookId, UUID userId);
 }

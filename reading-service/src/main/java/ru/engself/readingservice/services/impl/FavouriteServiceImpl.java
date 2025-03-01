@@ -34,6 +34,8 @@ public class FavouriteServiceImpl implements FavouriteService {
             throw new RuntimeException("This book already in favourites");
         }
 
+        bookService.incrementFavourites(bookId, userId);
+
         FavouriteDTO favouriteDTO = FavouriteDTO.builder()
                 .userId(userId)
                 .book(bookDTO)
@@ -50,6 +52,8 @@ public class FavouriteServiceImpl implements FavouriteService {
 
         Favourite favourite = favouriteRepository.findByUserIdAndBookBookId(userId, bookId)
                 .orElseThrow(() -> new RuntimeException("Favourite not found"));
+
+        bookService.decrementFavourites(bookId, userId);
 
         favouriteRepository.delete(favourite);
         return "successfully deleted";

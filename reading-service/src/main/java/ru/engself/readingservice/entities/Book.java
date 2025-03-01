@@ -50,6 +50,12 @@ public class Book {
     @Column(name = "level", nullable = false)
     private Level level;
 
+    @Column(name = "downloads", nullable = false, columnDefinition = "integer default 0")
+    private Integer downloads = 0;
+
+    @Column(name = "favourites", nullable = false, columnDefinition = "integer default 0")
+    private Integer favourites = 0;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

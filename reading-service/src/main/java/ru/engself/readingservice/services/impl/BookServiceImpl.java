@@ -126,8 +126,44 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public ByteArrayResource downloadBook(UUID bookId, UUID userId) {
         BookDTO book = getBookById(bookId, userId);
+        incrementDownloads(bookId, userId);
+
         return photoFeignController.downloadPdf(book.getBookFile(), BucketEnum.BOOKS);
+    }
+
+    @Override
+    @Transactional
+    public void incrementDownloads(UUID bookId, UUID userId) {
+        BookDTO book = getBookById(bookId, userId);
+        book.setDownloads(book.getDownloads() + 1);
+
+        bookRepository.save(
+                bookMapper.toEntity(book)
+        );
+    }
+
+    @Override
+    @Transactional
+    public void incrementFavourites(UUID bookId, UUID userId) {
+        BookDTO book = getBookById(bookId, userId);
+        book.setFavourites(book.getFavourites() + 1);
+
+        bookRepository.save(
+                bookMapper.toEntity(book)
+        );
+    }
+
+    @Override
+    @Transactional
+    public void decrementFavourites(UUID bookId, UUID userId) {
+        BookDTO book = getBookById(bookId, userId);
+        book.setFavourites(book.getFavourites() - 1);
+
+        bookRepository.save(
+                bookMapper.toEntity(book)
+        );
     }
 }

@@ -32,6 +32,10 @@ public class BookDTO {
 
     private Level level;
 
+    private Integer downloads;
+
+    private Integer favourites;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
