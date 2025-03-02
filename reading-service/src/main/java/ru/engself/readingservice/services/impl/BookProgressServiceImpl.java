@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import ru.engself.activitieslibrary.aspects.TrackActivity;
 import ru.engself.readingservice.dtos.BookDTO;
 import ru.engself.readingservice.dtos.BookProgressDTO;
 import ru.engself.readingservice.dtos.UserDTO;
 import ru.engself.readingservice.entities.BookProgress;
-import ru.engself.readingservice.enums.Level;
 import ru.engself.readingservice.mappers.BookProgressMapper;
 import ru.engself.readingservice.repositories.BookProgressRepository;
 import ru.engself.readingservice.services.BookProgressService;
@@ -35,6 +35,11 @@ public class BookProgressServiceImpl implements BookProgressService {
 
     @Override
     @Transactional
+    @TrackActivity(
+            userId = "#userId",
+            activityType = "#service.getActivityType(#bookId)",
+            activityTitle = "#service.getActivityTitle(#bookId)"
+    )
     public BookProgressDTO markBookAsCompleted(UUID bookId, UUID userId) {
 
         BookProgress bookProgress = bookProgressRepository.findByBookBookIdAndUserInfoUserId(bookId, userId)
@@ -121,6 +126,21 @@ public class BookProgressServiceImpl implements BookProgressService {
 
     @Override
     public BookProgressDTO getBookProgressByBookId(UUID bookId, Authentication authentication) {
+        return bookProgressRepository.findBookProgressByBookBookId(bookId).map(bookProgressMapper::toDTO).orElseThrow(
+                () -> new EntityNotFoundException("There is no BookProgress with bookId: " + bookId)
+        );
+    }
+
+    public String getActivityType(UUID bookId) {
+        return "READING";
+    }
+
+    public String getActivityTitle(UUID bookId) {
+        BookProgressDTO resultDTO = getBookProgressByBookId(bookId);
+        return resultDTO.getBook().getTitle();
+    }
+
+    private BookProgressDTO getBookProgressByBookId(UUID bookId) {
         return bookProgressRepository.findBookProgressByBookBookId(bookId).map(bookProgressMapper::toDTO).orElseThrow(
                 () -> new EntityNotFoundException("There is no BookProgress with bookId: " + bookId)
         );

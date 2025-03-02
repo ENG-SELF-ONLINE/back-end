@@ -16,4 +16,5 @@ public interface UserTestResultRepository extends JpaRepository<UserTestResult, 
     @Query(value = "SELECT * FROM user_test_results WHERE (user_info->>'userId')::uuid = :userId", nativeQuery = true)
     List<UserTestResult> findUserTestResultsByUserInfoUserId(UUID userId);
 
+    Optional<UserTestResult> findByLessonLessonId(UUID lessonId);
 }

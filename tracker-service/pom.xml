@@ -89,6 +89,11 @@
             <artifactId>hypersistence-utils-hibernate-63</artifactId>
             <version>3.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>ru.eng-self</groupId>
+            <artifactId>activities-library</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

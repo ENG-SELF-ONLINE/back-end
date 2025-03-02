@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import ru.engself.activitieslibrary.aspects.TrackActivity;
 import ru.engself.testingservice.dtos.LessonDTO;
 import ru.engself.testingservice.dtos.UserDTO;
 import ru.engself.testingservice.dtos.UserTestResultDTO;
@@ -60,6 +61,11 @@ public class UserTestResultServiceImpl implements UserTestResultService {
     }
 
     @Override
+    @TrackActivity(
+            userId = "#userId",
+            activityType = "#service.getActivityType(#lessonId)",
+            activityTitle = "#service.getActivityTitle(#lessonId)"
+    )
     public UserTestResultDTO markTestAsPassed(UUID lessonId, UUID userId) {
 
         UserTestResult userTestResult = userTestResultRepository.findUserTestResultByLessonLessonIdAndUserInfoUserId(lessonId, userId)
@@ -158,6 +164,23 @@ public class UserTestResultServiceImpl implements UserTestResultService {
         kafkaTemplate.send("testing-updates", keyPrefix);
         userTestResultRepository.deleteById(userTestResultId);
         return "successful deleted";
+    }
+
+    public String getActivityType(UUID lessonId) {
+        UserTestResultDTO resultDTO = getUserTestResultDTO(lessonId);
+        return resultDTO.getLesson().getType().toString();
+    }
+
+    public String getActivityTitle(UUID lessonId) {
+        UserTestResultDTO resultDTO = getUserTestResultDTO(lessonId);
+        return resultDTO.getLesson().getTitle();
+    }
+
+    private UserTestResultDTO getUserTestResultDTO(UUID lessonId) {
+        UserTestResult userTestResult = userTestResultRepository.findByLessonLessonId(lessonId)
+                .orElseThrow(() -> new EntityNotFoundException("Result of lesson with id " + lessonId + " not found"));
+
+        return userTestResultMapper.toDTO(userTestResult);
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.engself.activitieslibrary.dtos.UserActivityDTO;
 import ru.engself.trackerservice.dtos.ActivityStatsDTO;
 import ru.engself.trackerservice.dtos.ActivityTrackerDTO;
 import ru.engself.trackerservice.services.ActivityTrackerService;
@@ -34,6 +35,12 @@ public class ActivityTrackerController {
     public ResponseEntity<ActivityTrackerDTO> getActivityById(@PathVariable UUID id, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(activityTrackerService.getActivityById(id, userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/activities")
+    public ResponseEntity<List<UserActivityDTO>> getLastThreeActivities(Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        return new ResponseEntity<>(activityTrackerService.getLastThreeActivities(userId), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

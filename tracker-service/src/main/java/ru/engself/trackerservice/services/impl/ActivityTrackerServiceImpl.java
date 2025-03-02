@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import ru.engself.activitieslibrary.dtos.UserActivityDTO;
+import ru.engself.activitieslibrary.services.UserActivityService;
 import ru.engself.trackerservice.dtos.ActivityStatsDTO;
 import ru.engself.trackerservice.dtos.ActivityTrackerDTO;
 import ru.engself.trackerservice.dtos.DeckStatisticsDTO;
@@ -19,8 +21,6 @@ import ru.engself.trackerservice.utils.feigns.ProfileFeignController;
 import javax.ws.rs.NotFoundException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,6 +36,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
     private final ActivityTrackerMapper activityTrackerMapper;
     private final ProfileFeignController profileFeignController;
     private final DictionaryFeignController dictionaryFeignController;
+    private final UserActivityService userActivityService;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
@@ -148,4 +149,8 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
                 .build();
     }
 
+    @Override
+    public List<UserActivityDTO> getLastThreeActivities(UUID userId) {
+        return userActivityService.getLastThreeActivities(userId);
+    }
 }
