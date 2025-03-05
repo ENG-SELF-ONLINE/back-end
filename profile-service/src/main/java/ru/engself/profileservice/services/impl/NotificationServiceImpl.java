@@ -73,7 +73,7 @@ public class NotificationServiceImpl implements NotificationService {
     public NotificationDTO getNotificationByRecipientIdAndType(UUID recipientId, NotificationType notificationType, UUID userId) {
         Notification notification = notificationRepository
                 .findNotificationsByRecipientIdAndNotificationType(recipientId, notificationType)
-                .orElseThrow(() -> new UserNotFoundException("There is no notification with the specified parameters"));
+                .orElse(null);
 
         return notificationMapper.toDTO(notification);
     }

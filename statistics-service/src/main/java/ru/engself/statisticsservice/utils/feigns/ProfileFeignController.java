@@ -16,10 +16,10 @@ public interface ProfileFeignController {
 
     @GetMapping("/notifications/recipient/{recipientId}")
     NotificationDTO getNotificationByRecipientIdAndType(@PathVariable UUID recipientId,
-                                                        @RequestBody NotificationType notificationType,
+                                                        @RequestParam("type") NotificationType notificationType,
                                                         @RequestHeader("Authorization") String authorizationHeader);
 
-    @PostMapping("notifications/recipient/{recipientId}/sender/{senderId}")
+    @PostMapping("/notifications/recipient/{recipientId}/sender/{senderId}")
     NotificationDTO createNotification(@PathVariable UUID recipientId,
                                        @PathVariable UUID senderId,
                                        @RequestBody NotificationDTO notificationDTO,

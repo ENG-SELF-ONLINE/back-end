@@ -30,14 +30,14 @@ public class NotificationController {
 
     @GetMapping("/recipient/{recipientId}/sender/{senderId}")
     public ResponseEntity<NotificationDTO> getNotificationByUsersIdAndType(@PathVariable UUID recipientId, @PathVariable UUID senderId,
-                                                                  NotificationType notificationType, Authentication authentication) {
+                                                                           NotificationType notificationType, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(notificationService.getNotificationByUsersIdAndType(recipientId, senderId, notificationType, userId), HttpStatus.OK);
     }
 
     @GetMapping("/recipient/{recipientId}")
     public ResponseEntity<NotificationDTO> getNotificationByRecipientIdAndType(@PathVariable UUID recipientId,
-                                                                           NotificationType notificationType, Authentication authentication) {
+                                                                               @RequestParam("type") NotificationType notificationType, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(notificationService.getNotificationByRecipientIdAndType(recipientId, notificationType, userId), HttpStatus.OK);
     }

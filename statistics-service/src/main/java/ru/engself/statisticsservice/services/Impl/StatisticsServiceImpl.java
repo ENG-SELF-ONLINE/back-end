@@ -158,8 +158,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         int totalProgress = (bookProgress + listeningProgress + grammarProgress) / 3;
 
-        if (totalProgress > 80 && !hasHighProgressNotification(userId, authentication)) {
-            sendHighProgressNotification(authentication);
+        if (friendId == null) {
+            if (totalProgress > 80 && !hasHighProgressNotification(userId, authentication)) {
+                sendHighProgressNotification(authentication);
+            }
         }
 
         return totalProgress;
@@ -180,7 +182,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .sender(null)
                 .type(NotificationType.PROGRESS_UPDATE)
                 .message("Поздравляем! Ваш общий прогресс достиг 80%! Вы можете перейти на новый уровень.")
-                .contextId(null)
+                .contextId(UUID.randomUUID())
                 .isRead(false)
                 .build();
 
