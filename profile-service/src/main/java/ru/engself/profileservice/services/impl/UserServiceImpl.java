@@ -132,6 +132,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO upgradeUserLevel(UUID userId) {
+        UserDTO user = getUserById(userId);
+
+        user.setLevel(
+                Level.valueOf(getUserNextLevel(null, userId))
+        );
+
+        //TODO РЕАЛИЗОВАТЬ СОЗДАНИЕ СВЯЗЕЙ
+
+        return userMapper.toDTO(
+                userRepository.save(userMapper.toEntity(user))
+        );
+    }
+
+    @Override
     public String deleteUserById(UUID userId) {
 
         if (userRepository.findById(userId).isEmpty()) {

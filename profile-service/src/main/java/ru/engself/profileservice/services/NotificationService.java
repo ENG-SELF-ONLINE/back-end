@@ -14,4 +14,8 @@ public interface NotificationService {
     String deleteNotificationById(UUID notificationId, UUID userId);
 
     NotificationDTO getNotificationByUsersIdAndType(UUID recipientId, UUID senderId, NotificationType notificationType, UUID userId);
+
+    NotificationDTO getNotificationByRecipientIdAndType(UUID recipientId, NotificationType notificationType, UUID userId);
+
+    String acceptLevelUpgrade(UUID notificationId, UUID userId);
 }

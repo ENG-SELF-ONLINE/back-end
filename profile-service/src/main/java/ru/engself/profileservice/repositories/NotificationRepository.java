@@ -16,4 +16,6 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     @Query("SELECT n FROM Notification n WHERE n.recipient.userId = :recipientId AND n.sender.userId = :senderId AND n.type = :notificationType")
     Optional<Notification> findNotificationByRecipientUserIdAndSenderUserIdAndType(UUID recipientId, UUID senderId, NotificationType notificationType);
 
+    @Query("SELECT n FROM Notification n WHERE n.recipient.userId = :recipientId AND n.type = :notificationType")
+    Optional<Notification> findNotificationsByRecipientIdAndNotificationType(UUID recipientId, NotificationType notificationType);
 }

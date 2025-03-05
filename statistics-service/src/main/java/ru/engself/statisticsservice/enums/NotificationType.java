@@ -1,4 +1,4 @@
-package ru.engself.profileservice.enums;
+package ru.engself.statisticsservice.enums;
 
 public enum NotificationType {
     FRIEND_REQUEST,

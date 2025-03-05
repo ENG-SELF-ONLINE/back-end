@@ -14,6 +14,8 @@ public interface UserService {
 
     UserDTO updateUserById(UserDTO userDTO, UUID userId);
 
+    UserDTO upgradeUserLevel(UUID userId);
+
     String deleteUserById(UUID userId);
 
     UserDTO getUserByEmail(String email, UUID userId);

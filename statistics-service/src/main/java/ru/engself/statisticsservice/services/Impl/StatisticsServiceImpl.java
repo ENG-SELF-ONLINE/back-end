@@ -5,13 +5,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.engself.statisticsservice.dtos.ActivityStatsDTO;
 import ru.engself.statisticsservice.dtos.DeckStatisticsDTO;
+import ru.engself.statisticsservice.dtos.NotificationDTO;
 import ru.engself.statisticsservice.enums.LessonType;
+import ru.engself.statisticsservice.enums.NotificationType;
 import ru.engself.statisticsservice.services.RedisService;
 import ru.engself.statisticsservice.services.StatisticsService;
-import ru.engself.statisticsservice.utils.feigns.ActivityTrackerFeignController;
-import ru.engself.statisticsservice.utils.feigns.DictionaryFeignController;
-import ru.engself.statisticsservice.utils.feigns.ReadingFeignController;
-import ru.engself.statisticsservice.utils.feigns.TestingFeignController;
+import ru.engself.statisticsservice.utils.feigns.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,6 +25,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final DictionaryFeignController dictionaryFeignController;
     private final ReadingFeignController readingFeignController;
     private final TestingFeignController testingFeignController;
+    private final ProfileFeignController profileFeignController;
     private final RedisService redisService;
 
 
@@ -156,6 +156,34 @@ public class StatisticsServiceImpl implements StatisticsService {
         Integer listeningProgress = getBookProgressPercentByUserIdAndType(userId, LessonType.LISTENING, authentication);
         Integer grammarProgress = getBookProgressPercentByUserIdAndType(userId, LessonType.GRAMMAR, authentication);
 
-        return (bookProgress + listeningProgress + grammarProgress) / 3;
+        int totalProgress = (bookProgress + listeningProgress + grammarProgress) / 3;
+
+        if (totalProgress > 80 && !hasHighProgressNotification(userId, authentication)) {
+            sendHighProgressNotification(authentication);
+        }
+
+        return totalProgress;
+    }
+
+    private boolean hasHighProgressNotification(UUID userId, Authentication authentication) {
+        NotificationDTO notificationDTO = profileFeignController.getNotificationByRecipientIdAndType(userId,
+                NotificationType.PROGRESS_UPDATE, getAuthorizationHeader(authentication));
+
+        return notificationDTO != null;
+    }
+
+    private void sendHighProgressNotification(Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+
+        NotificationDTO notificationDTO = NotificationDTO.builder()
+                .recipient(profileFeignController.getUserById(getAuthorizationHeader(authentication)))
+                .sender(null)
+                .type(NotificationType.PROGRESS_UPDATE)
+                .message("Поздравляем! Ваш общий прогресс достиг 80%! Вы можете перейти на новый уровень.")
+                .contextId(null)
+                .isRead(false)
+                .build();
+
+        profileFeignController.createNotification(userId, userId, notificationDTO, getAuthorizationHeader(authentication));
     }
 }

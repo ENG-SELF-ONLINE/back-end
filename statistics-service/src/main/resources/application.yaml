@@ -31,6 +31,7 @@ other:
       reading: http://localhost:8082/book-progress
       testing: http://localhost:8083/user-test-results
       tracker: http://localhost:8085/trackers
+      profile: http://localhost:8084
 
 server:
   port: 8086

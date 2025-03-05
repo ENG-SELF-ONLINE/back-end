@@ -68,4 +68,21 @@ public class NotificationServiceImpl implements NotificationService {
 
         return notificationMapper.toDTO(notification);
     }
+
+    @Override
+    public NotificationDTO getNotificationByRecipientIdAndType(UUID recipientId, NotificationType notificationType, UUID userId) {
+        Notification notification = notificationRepository
+                .findNotificationsByRecipientIdAndNotificationType(recipientId, notificationType)
+                .orElseThrow(() -> new UserNotFoundException("There is no notification with the specified parameters"));
+
+        return notificationMapper.toDTO(notification);
+    }
+
+    @Override
+    public String acceptLevelUpgrade(UUID notificationId, UUID userId) {
+        userService.upgradeUserLevel(userId);
+        deleteNotificationById(notificationId, userId);
+
+        return "Notification was successfully deleted";
+    }
 }

@@ -35,6 +35,13 @@ public class NotificationController {
         return new ResponseEntity<>(notificationService.getNotificationByUsersIdAndType(recipientId, senderId, notificationType, userId), HttpStatus.OK);
     }
 
+    @GetMapping("/recipient/{recipientId}")
+    public ResponseEntity<NotificationDTO> getNotificationByRecipientIdAndType(@PathVariable UUID recipientId,
+                                                                           NotificationType notificationType, Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        return new ResponseEntity<>(notificationService.getNotificationByRecipientIdAndType(recipientId, notificationType, userId), HttpStatus.OK);
+    }
+
     @PostMapping("/recipient/{recipientId}/sender/{senderId}")
     public ResponseEntity<NotificationDTO> createNotification(@PathVariable UUID recipientId, @PathVariable UUID senderId,
                                                               @RequestBody NotificationDTO notificationDTO, Authentication authentication) {
@@ -46,6 +53,12 @@ public class NotificationController {
     public ResponseEntity<String> deleteNotificationById(@PathVariable UUID notificationId, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(notificationService.deleteNotificationById(notificationId, userId), HttpStatus.OK);
+    }
+
+    @PostMapping("/{notificationId}/accept")
+    public ResponseEntity<String> acceptLevelUpgrade(@PathVariable UUID notificationId, Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        return new ResponseEntity<>(notificationService.acceptLevelUpgrade(notificationId, userId), HttpStatus.OK);
     }
 
 }
