@@ -3,6 +3,7 @@ package ru.engself.profileservice.services.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.profileservice.dtos.UserDTO;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static ru.engself.profileservice.enums.Level.C2;
+import static ru.engself.profileservice.utils.AuthenticationUtils.generateKeyPrefix;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     @Transactional
@@ -138,6 +141,12 @@ public class UserServiceImpl implements UserService {
         user.setLevel(
                 Level.valueOf(getUserNextLevel(null, userId))
         );
+
+        String readingKeyPrefix = generateKeyPrefix("book_progress", userId);
+        String testingKeyPrefix = generateKeyPrefix("test_progress_type", userId);
+
+        kafkaTemplate.send("reading-updates", readingKeyPrefix);
+        kafkaTemplate.send("testing-updates", testingKeyPrefix);
 
         //TODO РЕАЛИЗОВАТЬ СОЗДАНИЕ СВЯЗЕЙ
 
