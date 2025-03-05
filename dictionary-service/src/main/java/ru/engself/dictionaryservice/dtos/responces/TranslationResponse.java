@@ -26,6 +26,6 @@ public class TranslationResponse {
     public static class Translations {
 
         @JsonProperty("translatedText")
-        private String translatedText;
+        private List<String> translatedText;
     }
 }

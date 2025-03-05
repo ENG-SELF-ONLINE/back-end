@@ -106,6 +106,7 @@ public class CommonWordServiceImpl implements CommonWordService {
                     .map(TranslationResponse::getData)
                     .map(TranslationResponse.MyData::getTranslations)
                     .map(TranslationResponse.Translations::getTranslatedText)
+                    .flatMap(translatedTexts -> translatedTexts.stream().findFirst())
                     .orElseThrow(() -> new TranslationApiException("Не удалось получить перевод", null));
 
         } catch (FeignException e) {
