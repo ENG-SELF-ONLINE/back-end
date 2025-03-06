@@ -13,13 +13,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.authservice.config.KeycloakProvider;
+import ru.engself.authservice.dtos.UserDTO;
 import ru.engself.authservice.http.requests.CreateUserRequest;
 import ru.engself.authservice.http.requests.LoginRequest;
 import ru.engself.authservice.service.KeycloakAdminClientService;
+import ru.engself.authservice.utils.feigns.UserFeignController;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 import java.util.Map;
+
+import static ru.engself.authservice.utils.AuthenticationUtils.getAuthorizationHeader;
 
 @RestController
 @CrossOrigin("*")
@@ -28,6 +32,7 @@ public class UserController {
 
     private final KeycloakAdminClientService kcAdminClient;
     private final KeycloakProvider kcProvider;
+    private final UserFeignController userFeignController;
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/create")
@@ -42,6 +47,13 @@ public class UserController {
         try (Keycloak keycloak = kcProvider.newKeycloakBuilderWithPasswordCredentials(loginRequest.getUsername(), loginRequest.getPassword()).build()) {
             try {
                 AccessTokenResponse accessTokenResponse = keycloak.tokenManager().getAccessToken();
+                UserDTO user = userFeignController.getUserById(getAuthorizationHeader(accessTokenResponse.getToken()));
+
+                if (!user.isInitialized()) {
+                    userFeignController.createUserProgressForLevel(user.getLevel(), getAuthorizationHeader(accessTokenResponse.getToken()));
+                    user.setInitialized(true);
+                    userFeignController.updateUserById(user, getAuthorizationHeader(accessTokenResponse.getToken()));
+                }
                 return ResponseEntity.ok(accessTokenResponse);
             } catch (BadRequestException ex) {
                 LOG.warn("Invalid account. User probably hasn't verified email.", ex);

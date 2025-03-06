@@ -1,8 +1,8 @@
-package ru.engself.testingservice.dtos;
+package ru.engself.profileservice.dtos;
 
 import lombok.*;
-import ru.engself.testingservice.enums.LessonType;
-import ru.engself.testingservice.enums.Level;
+import ru.engself.profileservice.enums.LessonType;
+import ru.engself.profileservice.enums.Level;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

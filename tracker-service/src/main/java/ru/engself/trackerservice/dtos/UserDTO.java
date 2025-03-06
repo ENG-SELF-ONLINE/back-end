@@ -27,6 +27,8 @@ public class UserDTO {
 
     private Level level;
 
+    private boolean isInitialized;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

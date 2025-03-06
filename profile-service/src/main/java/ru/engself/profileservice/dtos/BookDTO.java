@@ -1,8 +1,8 @@
-package ru.engself.readingservice.dtos;
+package ru.engself.profileservice.dtos;
 
 import lombok.*;
-import ru.engself.readingservice.enums.Genre;
-import ru.engself.readingservice.enums.Level;
+import ru.engself.profileservice.enums.Genre;
+import ru.engself.profileservice.enums.Level;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

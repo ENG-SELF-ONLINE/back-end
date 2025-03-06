@@ -1,5 +1,6 @@
 package ru.engself.profileservice.services;
 
+import org.springframework.security.core.Authentication;
 import ru.engself.profileservice.dtos.NotificationDTO;
 import ru.engself.profileservice.enums.NotificationType;
 
@@ -17,5 +18,5 @@ public interface NotificationService {
 
     NotificationDTO getNotificationByRecipientIdAndType(UUID recipientId, NotificationType notificationType, UUID userId);
 
-    String acceptLevelUpgrade(UUID notificationId, UUID userId);
+    String acceptLevelUpgrade(UUID notificationId, Authentication userId);
 }

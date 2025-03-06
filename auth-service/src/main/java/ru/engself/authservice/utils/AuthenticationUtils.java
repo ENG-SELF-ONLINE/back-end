@@ -1,4 +1,4 @@
-package ru.engself.profileservice.utils;
+package ru.engself.authservice.utils;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -32,12 +32,8 @@ public class AuthenticationUtils {
         return String.format("%s:%s:", prefix, userId.toString());
     }
 
-    public static String getAuthorizationHeader(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            return "Bearer " + jwt.getTokenValue();
-        } else {
-            return null;
-        }
+    public static String getAuthorizationHeader(String authentication) {
+            return "Bearer " + authentication;
     }
 
 }

@@ -14,6 +14,7 @@ import ru.engself.readingservice.dtos.BookDTO;
 import ru.engself.readingservice.enums.Level;
 import ru.engself.readingservice.services.BookService;
 
+import java.util.List;
 import java.util.UUID;
 
 import static ru.engself.readingservice.utils.AuthenticationUtils.getUserIdFromAuthentication;
@@ -43,6 +44,12 @@ public class BookController {
     public ResponseEntity<Page<BookDTO>> getAllByLevel(@PageableDefault Pageable pageable, Level level, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(bookService.getAllByLevel(level, userId, pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("/without-page")
+    public ResponseEntity<List<BookDTO>> getAllByLevelWithoutPage(Level level, Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        return new ResponseEntity<>(bookService.getAllByLevelWithoutPage(level, userId), HttpStatus.OK);
     }
 
     @GetMapping("/{bookId}/download")

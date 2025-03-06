@@ -30,6 +30,8 @@ other:
   service:
     url:
       photo: http://localhost:9999/files
+      reading: http://localhost:8082
+      testing: http://localhost:8083
 
 server:
   port: 8084

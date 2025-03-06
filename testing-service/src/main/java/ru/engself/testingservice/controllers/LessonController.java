@@ -30,7 +30,8 @@ public class LessonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LessonDTO>> getLessonsByLessonTypeAndLevel(Level level, LessonType type, Authentication authentication) {
+    public ResponseEntity<List<LessonDTO>> getLessonsByLessonTypeAndLevel(@RequestParam("level") Level level,
+                                                                          @RequestParam("type") LessonType type, Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(lessonService.getLessonsByLessonTypeAndLevel(level, type, userId), HttpStatus.OK);
     }

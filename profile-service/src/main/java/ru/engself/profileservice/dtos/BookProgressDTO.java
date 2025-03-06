@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import ru.engself.profileservice.enums.Level;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,23 +12,18 @@ import java.util.UUID;
 @Setter
 @Builder
 @AllArgsConstructor
-public class UserDTO {
+public class BookProgressDTO {
 
-    private UUID userId;
+    private UUID bookProgressId;
 
-    private String email;
+    private UserDTO userInfo;
 
-    private String firstName;
+    private BookDTO book;
 
-    private String lastName;
-
-    private String photo;
-
-    private Level level;
-
-    private boolean isInitialized;
+    private Boolean isCompleted;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
 }

@@ -18,6 +18,7 @@ import ru.engself.readingservice.utils.feigns.ProfileFeignController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static ru.engself.readingservice.utils.AuthenticationUtils.generateKeyPrefix;
@@ -74,6 +75,13 @@ public class BookProgressServiceImpl implements BookProgressService {
     public BookProgressDTO createBookProgress(BookDTO bookDTO, Authentication authentication) {
 
         UserDTO user = profileFeignController.getUserById(null, getAuthorizationHeader(authentication));
+
+        Optional<BookProgress> progressOptional = bookProgressRepository.findByBookBookIdAndUserInfoUserId(
+                    bookDTO.getBookId(), user.getUserId());
+
+        if (progressOptional.isPresent()) {
+            return bookProgressMapper.toDTO(progressOptional.get());
+        }
 
         BookProgressDTO bookProgress = BookProgressDTO.builder()
                 .book(bookDTO)
@@ -141,9 +149,11 @@ public class BookProgressServiceImpl implements BookProgressService {
     }
 
     private BookProgressDTO getBookProgressByBookId(UUID bookId) {
-        return bookProgressRepository.findBookProgressByBookBookId(bookId).map(bookProgressMapper::toDTO).orElseThrow(
-                () -> new EntityNotFoundException("There is no BookProgress with bookId: " + bookId)
-        );
+        BookProgress bookProgress = bookProgressRepository
+                .findFirstByBookBookIdOrderByCreatedAtDesc(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("There is no BookProgress with bookId: " + bookId));
+
+        return bookProgressMapper.toDTO(bookProgress);
     }
 
 }

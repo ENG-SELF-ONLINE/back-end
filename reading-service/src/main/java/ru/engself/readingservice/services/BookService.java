@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.engself.readingservice.dtos.BookDTO;
 import ru.engself.readingservice.enums.Level;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface BookService {
@@ -33,4 +34,6 @@ public interface BookService {
 
     @Transactional
     void decrementFavourites(UUID bookId, UUID userId);
+
+    List<BookDTO> getAllByLevelWithoutPage(Level level, UUID userId);
 }

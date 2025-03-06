@@ -57,8 +57,7 @@ public class NotificationController {
 
     @PostMapping("/{notificationId}/accept")
     public ResponseEntity<String> acceptLevelUpgrade(@PathVariable UUID notificationId, Authentication authentication) {
-        UUID userId = getUserIdFromAuthentication(authentication);
-        return new ResponseEntity<>(notificationService.acceptLevelUpgrade(notificationId, userId), HttpStatus.OK);
+        return new ResponseEntity<>(notificationService.acceptLevelUpgrade(notificationId, authentication), HttpStatus.OK);
     }
 
 }

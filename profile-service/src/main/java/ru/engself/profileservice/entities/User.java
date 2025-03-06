@@ -39,6 +39,9 @@ public class User {
     @Column(name = "level", nullable = false)
     private Level level;
 
+    @Column(name = "is_initialized", nullable = false)
+    private boolean isInitialized = false;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

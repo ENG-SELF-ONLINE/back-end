@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.engself.profileservice.dtos.UserDTO;
+import ru.engself.profileservice.enums.BucketEnum;
 import ru.engself.profileservice.enums.Level;
 import ru.engself.profileservice.services.UserService;
 
@@ -68,6 +69,11 @@ public class UserController {
     public ResponseEntity<String> deleteUserById(Authentication authentication) {
         UUID userId = getUserIdFromAuthentication(authentication);
         return new ResponseEntity<>(userService.deleteUserById(userId), HttpStatus.OK);
+    }
+
+    @PostMapping("/create-progress")
+    public ResponseEntity<String> createUserProgressForLevel(@RequestParam("level") Level level, Authentication authentication) {
+        return new ResponseEntity<>(userService.createUserProgressForLevel(level, authentication), HttpStatus.OK);
     }
 
 }

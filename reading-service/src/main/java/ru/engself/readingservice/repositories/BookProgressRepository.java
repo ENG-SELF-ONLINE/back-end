@@ -18,4 +18,6 @@ public interface BookProgressRepository extends JpaRepository<BookProgress, UUID
 
     Optional<BookProgress> findBookProgressByBookBookId(UUID book_bookId);
 
+    Optional<BookProgress> findFirstByBookBookIdOrderByCreatedAtDesc(UUID book_bookId);
+
 }

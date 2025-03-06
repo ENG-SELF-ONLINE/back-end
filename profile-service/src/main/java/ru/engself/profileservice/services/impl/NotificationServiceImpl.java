@@ -1,6 +1,7 @@
 package ru.engself.profileservice.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.engself.profileservice.dtos.NotificationDTO;
 import ru.engself.profileservice.dtos.UserDTO;
@@ -14,6 +15,8 @@ import ru.engself.profileservice.services.UserService;
 
 import java.util.List;
 import java.util.UUID;
+
+import static ru.engself.profileservice.utils.AuthenticationUtils.getUserIdFromAuthentication;
 
 @Service
 @RequiredArgsConstructor
@@ -79,8 +82,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public String acceptLevelUpgrade(UUID notificationId, UUID userId) {
-        userService.upgradeUserLevel(userId);
+    public String acceptLevelUpgrade(UUID notificationId, Authentication authentication) {
+        UUID userId = getUserIdFromAuthentication(authentication);
+        userService.upgradeUserLevel(authentication);
         deleteNotificationById(notificationId, userId);
 
         return "Notification was successfully deleted";

@@ -1,6 +1,9 @@
 package ru.engself.dictionaryservice.dtos;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import ru.engself.dictionaryservice.enums.Level;
 
 import java.time.LocalDateTime;
@@ -9,7 +12,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@ToString
 @AllArgsConstructor
 public class UserDTO {
 
@@ -24,6 +26,8 @@ public class UserDTO {
     private String photo;
 
     private Level level;
+
+    private boolean isInitialized;
 
     private LocalDateTime createdAt;
 

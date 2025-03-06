@@ -22,6 +22,7 @@ import ru.engself.readingservice.services.BookService;
 import ru.engself.readingservice.utils.feigns.PhotoFeignController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static ru.engself.readingservice.utils.AuthenticationUtils.generateKeyPrefix;
@@ -63,8 +64,15 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Page<BookDTO> getAllByLevel(Level level, UUID userId, Pageable pageable) {
-        Page<Book> decks = bookRepository.findAllByLevel(level, pageable);
-        return decks.map(bookMapper::toDTO);
+        // Получаем страницу книг из репозитория
+        Page<Book> books = bookRepository.findAllByLevel(level, pageable);
+
+        // Преобразуем Page<Book> в Page<BookDTO>
+        Page<BookDTO> bookDTOs = books.map(bookMapper::toDTO);
+
+        System.out.println("Content: " + bookDTOs);
+
+        return bookDTOs;
     }
 
     @Override
@@ -165,5 +173,11 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(
                 bookMapper.toEntity(book)
         );
+    }
+
+    @Override
+    public List<BookDTO> getAllByLevelWithoutPage(Level level, UUID userId) {
+        return bookRepository.findAllByLevel(level).stream()
+                .map(bookMapper::toDTO).toList();
     }
 }

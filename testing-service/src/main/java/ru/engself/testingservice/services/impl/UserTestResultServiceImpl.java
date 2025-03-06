@@ -19,6 +19,7 @@ import ru.engself.testingservice.utils.feigns.ProfileFeignController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static ru.engself.testingservice.utils.AuthenticationUtils.generateKeyPrefix;
@@ -39,6 +40,15 @@ public class UserTestResultServiceImpl implements UserTestResultService {
 
         UserDTO user = profileFeignController.getUserById(null, getAuthorizationHeader(authentication));
         LessonDTO lessonDTO = lessonService.getLessonById(lessonId, user.getUserId());
+
+        Optional<UserTestResult> testResult = userTestResultRepository.findUserTestResultByLessonLessonIdAndUserInfoUserId(
+                lessonDTO.getLessonId(),
+                user.getUserId()
+        );
+
+        if (testResult.isPresent()) {
+            return userTestResultMapper.toDTO(testResult.get());
+        }
 
         UserTestResultDTO userTestResult = UserTestResultDTO.builder()
                 .userInfo(user)
@@ -177,7 +187,8 @@ public class UserTestResultServiceImpl implements UserTestResultService {
     }
 
     private UserTestResultDTO getUserTestResultDTO(UUID lessonId) {
-        UserTestResult userTestResult = userTestResultRepository.findByLessonLessonId(lessonId)
+        UserTestResult userTestResult = userTestResultRepository
+                .findFirstByLessonLessonIdOrderByCreatedAtDesc(lessonId)
                 .orElseThrow(() -> new EntityNotFoundException("Result of lesson with id " + lessonId + " not found"));
 
         return userTestResultMapper.toDTO(userTestResult);

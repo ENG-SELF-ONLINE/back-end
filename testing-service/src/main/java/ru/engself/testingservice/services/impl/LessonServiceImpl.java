@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.engself.testingservice.dtos.LessonDTO;
+import ru.engself.testingservice.entities.Lesson;
 import ru.engself.testingservice.enums.LessonType;
 import ru.engself.testingservice.enums.Level;
 import ru.engself.testingservice.mappers.LessonMapper;
@@ -47,10 +48,16 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<LessonDTO> getLessonsByLessonTypeAndLevel(Level level, LessonType type, UUID userId) {
-        return lessonRepository.findLessonsByTypeAndLevel(type, level).stream()
+        List<Lesson> lessons = lessonRepository.findLessonsByTypeAndLevel(type, level);
+
+        List<LessonDTO> lessonDTOs = lessons.stream()
                 .map(lessonMapper::toDTO)
                 .sorted(Comparator.comparing(LessonDTO::getLessonOrder))
                 .toList();
+
+        System.out.println("Lessons: " + lessonDTOs);
+
+        return lessonDTOs;
     }
 
     @Override
