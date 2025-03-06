@@ -64,15 +64,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Page<BookDTO> getAllByLevel(Level level, UUID userId, Pageable pageable) {
-        // Получаем страницу книг из репозитория
-        Page<Book> books = bookRepository.findAllByLevel(level, pageable);
-
-        // Преобразуем Page<Book> в Page<BookDTO>
-        Page<BookDTO> bookDTOs = books.map(bookMapper::toDTO);
-
-        System.out.println("Content: " + bookDTOs);
-
-        return bookDTOs;
+        Page<Book> decks = bookRepository.findAllByLevel(level, pageable);
+        return decks.map(bookMapper::toDTO);
     }
 
     @Override

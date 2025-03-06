@@ -48,16 +48,10 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<LessonDTO> getLessonsByLessonTypeAndLevel(Level level, LessonType type, UUID userId) {
-        List<Lesson> lessons = lessonRepository.findLessonsByTypeAndLevel(type, level);
-
-        List<LessonDTO> lessonDTOs = lessons.stream()
+        return lessonRepository.findLessonsByTypeAndLevel(type, level).stream()
                 .map(lessonMapper::toDTO)
                 .sorted(Comparator.comparing(LessonDTO::getLessonOrder))
                 .toList();
-
-        System.out.println("Lessons: " + lessonDTOs);
-
-        return lessonDTOs;
     }
 
     @Override
