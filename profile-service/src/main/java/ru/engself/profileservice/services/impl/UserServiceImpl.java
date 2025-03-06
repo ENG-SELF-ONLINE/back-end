@@ -142,11 +142,8 @@ public class UserServiceImpl implements UserService {
                 Level.valueOf(getUserNextLevel(null, userId))
         );
 
-        String readingKeyPrefix = generateKeyPrefix("book_progress", userId);
-        String testingKeyPrefix = generateKeyPrefix("test_progress_type", userId);
-
-        kafkaTemplate.send("reading-updates", readingKeyPrefix);
-        kafkaTemplate.send("testing-updates", testingKeyPrefix);
+        kafkaTemplate.send("reading-updates", generateKeyPrefix("book_progress", userId));
+        kafkaTemplate.send("testing-updates", generateKeyPrefix("test_progress_type", userId));
 
         //TODO РЕАЛИЗОВАТЬ СОЗДАНИЕ СВЯЗЕЙ
 

@@ -158,10 +158,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         int totalProgress = (bookProgress + listeningProgress + grammarProgress) / 3;
 
-        if (friendId == null) {
-            if (totalProgress > 80 && !hasHighProgressNotification(userId, authentication)) {
-                sendHighProgressNotification(authentication);
-            }
+        if (friendId == null && totalProgress > 80 && !hasHighProgressNotification(userId, authentication)) {
+            sendHighProgressNotification(authentication);
         }
 
         return totalProgress;
