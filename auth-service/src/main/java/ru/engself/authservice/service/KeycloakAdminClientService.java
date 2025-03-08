@@ -57,7 +57,7 @@ public class KeycloakAdminClientService {
                         .firstName(user.getFirstname())
                         .lastName(user.getLastname())
                         .level(Level.A1)
-                        .isInitialized(false)
+                        .initialized(false)
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
                         .build();

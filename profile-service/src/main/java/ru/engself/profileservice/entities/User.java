@@ -40,7 +40,7 @@ public class User {
     private Level level;
 
     @Column(name = "is_initialized", nullable = false)
-    private boolean isInitialized = false;
+    private boolean initialized = false;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
