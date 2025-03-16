@@ -46,6 +46,8 @@ public class BookServiceImpl implements BookService {
 
         bookDTO.setBookFile(bookName);
         bookDTO.setCoverImage(imageName);
+        bookDTO.setDownloads(0);
+        bookDTO.setFavourites(0);
         bookDTO.setCreatedAt(LocalDateTime.now());
         bookDTO.setUpdatedAt(LocalDateTime.now());
 

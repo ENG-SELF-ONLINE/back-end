@@ -32,7 +32,7 @@ public class BookProgress {
     @Column(name = "user_info", columnDefinition = "jsonb")
     private UserDTO userInfo;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.REMOVE})
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
