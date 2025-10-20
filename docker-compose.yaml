@@ -1,0 +1,120 @@
+version: '3'
+
+services:
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.1
+    container_name: 'keycloak'
+    restart: always
+    env_file:
+      - keycloak.env
+    command:
+      - start-dev
+    depends_on:
+      - postgres
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+    links:
+      - "postgres:postgres"
+    ports:
+      - "18080:8080"
+
+  postgres:
+    container_name: 'postgres'
+    image: 'postgres:15'
+    restart: always
+    env_file:
+      - postgres.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio-engself
+    env_file:
+      - minio.env
+    command: server --address :9000 ~/minio --console-address :9090
+    ports:
+      - '9090:9090'
+      - '9000:9000'
+    volumes:
+      - minio-data:/minio
+    networks:
+      - mynetwork
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb myminio/books;
+      /usr/bin/mc mb myminio/covers;
+      /usr/bin/mc mb myminio/profile;
+      /usr/bin/mc mb myminio/decks;
+      /usr/bin/mc mb myminio/words;
+      /usr/bin/mc mb myminio/explanations;
+      /usr/bin/mc mb myminio/audios;
+      /usr/bin/mc policy set public myminio/books;
+      /usr/bin/mc policy set public myminio/covers;
+      /usr/bin/mc policy set public myminio/profile;
+      /usr/bin/mc policy set public myminio/decks;
+      /usr/bin/mc policy set public myminio/words;
+      /usr/bin/mc policy set public myminio/explanations;
+      /usr/bin/mc policy set public myminio/audios;
+      exit 0;
+      "
+    networks:
+      - mynetwork
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    container_name: 'zookeeper'
+    env_file:
+      - kafka.env
+    ports:
+      - "22181:2181"
+    networks:
+      - mynetwork
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    container_name: 'kafka'
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9093"
+      - "9092:9092"
+    env_file:
+      - kafka.env
+    networks:
+      - mynetwork
+
+  redis:
+    image: redis:latest
+    container_name: 'redis'
+    ports:
+      - "6379:6379"
+    networks:
+      - mynetwork
+    volumes:
+      - redis:/data
+
+volumes:
+  db-data:
+    driver: local
+  keycloak-data:
+    driver: local
+  redis:
+    driver: local
+  minio-data:
+    driver: local
+
+networks:
+  mynetwork:
+    driver: bridge

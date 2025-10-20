@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
+  kafka:
+    topic:
+      wordProgressUpdates: word-progress-updates
+    bootstrap-servers: localhost:9092
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+
+keycloak:
+  realm: 'eng-self'
+  auth-server-url: http://localhost:18080
+  ssl-required: external
+  resource: 'eng-self'
+  credentials:
+    secret: 'p4XX4oUQbUA4Y3IfeTC9ihW2HjFkbaEr'
+  use-resource-role-mappings: true
+  bearer-only: true
+
+other:
+  service:
+    url:
+      photo: http://localhost:9999/files
+      common-word: https://api.dictionaryapi.dev/api/v2/entries/en
+      profile: http://localhost:8084/users
+
+unsplash:
+  access-key: qdZfzptnbTpSNUsQhPEm7AesgmBSI8NmxrLtQD2LIhU
+  search-url: https://api.unsplash.com/search/photos?query=
+
+translator:
+  rapidapi:
+    host: deep-translate1.p.rapidapi.com
+    key: 4ec41f8239mshcb8f523d7644712p1a19a7jsn6036757bdf80
+    url: https://deep-translate1.p.rapidapi.com
+
+server:
+  port: 8081

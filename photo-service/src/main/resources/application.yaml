@@ -1,0 +1,21 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+
+minio:
+  url: http://localhost:9000
+  accessKey: minioadmin
+  secretKey: minioadmin
+  buckets:
+    books: books
+    covers: covers
+    profile: profile
+    decks: decks
+    words: words
+    explanations: explanations
+    audios: audios
+
+server:
+  port: 9999
